@@ -1,7 +1,11 @@
 {
   "name": "basic-stack-router",
-  "module": "index.ts",
-  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "vite build",
     "watch": "vite build --watch",
@@ -9,9 +13,11 @@
     "convention": "pnpm prettier && eslint --fix \"**/*.{js,mjs,ts,jsx,tsx,mts,html}\"",
     "prepare": "husky"
   },
+  "dependencies": {
+    "path-to-regexp": "^8.2.0"
+  },
   "devDependencies": {
     "@eslint/js": "^9.12.0",
-    "@types/bun": "latest",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react-swc": "^3.7.1",
@@ -21,7 +27,7 @@
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.37.1",
-    "glob": "^11.0.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
     "globals": "^15.11.0",
     "husky": "^9.1.6",
     "lint-staged": "^15.2.10",

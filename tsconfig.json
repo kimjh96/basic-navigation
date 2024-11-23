@@ -1,15 +1,26 @@
 {
   "compilerOptions": {
     "module": "esnext",
-    "target": "es5",
+    "target": "es2017",
     "moduleResolution": "node",
     "strict": true,
     "noEmit": true,
     "jsx": "preserve",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@core": ["./core"],
+      "@core/*": ["./core/*"],
+      "@hooks": ["./hooks"],
+      "@hooks/*": ["./hooks/*"],
+      "@screens": ["./screens"],
+      "@screens/*": ["./screens/*"],
+      "@utils": ["./utils"],
+      "@utils/*": ["./utils/*"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
-  "exclude": ["node_modules", "dist", "**/*.styles.ts", "**/*.styles.tsx"]
+  "exclude": ["node_modules", "dist"]
 }
