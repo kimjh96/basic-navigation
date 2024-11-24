@@ -9,13 +9,14 @@ import TransitionProvider from "@core/transition/TransitionProvider";
 
 export interface StackRouterProps {
   children: ReactElement<StackRouteProps> | ReactElement<StackRouteProps>[];
+  initPath?: string;
 }
 
-function StackRouter({ children }: StackRouterProps) {
+function StackRouter({ children, initPath }: StackRouterProps) {
   return (
-    <ActivityProvider stackRoutes={children}>
+    <ActivityProvider stackRoutes={children} initPath={initPath}>
       <NavigationProvider>
-        <HistoryProvider>
+        <HistoryProvider initPath={initPath}>
           <TransitionProvider>{children}</TransitionProvider>
         </HistoryProvider>
       </NavigationProvider>

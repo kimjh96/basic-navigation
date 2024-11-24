@@ -1,14 +1,21 @@
 import { PropsWithChildren, useContext, useEffect, useReducer } from "react";
 
+import type { StackRouterProps } from "@core/StackRouter";
+
+import isServer from "@utils/isServer";
+
 import HistoryContext from "@core/history/HistoryContext";
 import { historyReducer } from "@core/history/store";
 import { HistoryActionType } from "@core/history/typing";
 import NavigationContext from "@core/navigation/NavigationContext";
 import { NavigationActionType } from "@core/navigation/typing";
 
-function HistoryProvider({ children }: PropsWithChildren) {
+function HistoryProvider({
+  children,
+  initPath
+}: PropsWithChildren<Pick<StackRouterProps, "initPath">>) {
   const [state, dispatch] = useReducer(historyReducer, {
-    records: [window.location.pathname]
+    records: [isServer() ? initPath || "/" : window.location.pathname]
   });
   const { dispatch: navigationDispatch } = useContext(NavigationContext);
 
