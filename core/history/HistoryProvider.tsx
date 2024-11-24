@@ -14,19 +14,21 @@ function HistoryProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const handlePopState = () => {
-      const isBack = state.records[state.records.length - 2] === window.location.pathname;
+      const { pathname, search } = window.location;
+      const path = `${pathname}${search}`;
+      const isBack = state.records[state.records.length - 2] === path;
 
       if (isBack) {
         dispatch({ type: HistoryActionType.POP });
         navigationDispatch({
           type: NavigationActionType.POP,
-          path: window.location.pathname
+          path
         });
       } else {
-        dispatch({ type: HistoryActionType.PUSH, path: window.location.pathname });
+        dispatch({ type: HistoryActionType.PUSH, path });
         navigationDispatch({
           type: NavigationActionType.PUSH,
-          path: window.location.pathname
+          path
         });
       }
     };

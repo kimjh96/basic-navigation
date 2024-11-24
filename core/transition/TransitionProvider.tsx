@@ -19,7 +19,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
   const [transitionBuffer, setTransitionBuffer] = useState<
     Array<{
       id: string;
-      flush: () => Promise<boolean>;
+      flush: (records: string[]) => Promise<boolean>;
     }>
   >([]);
 
@@ -38,8 +38,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
         });
       } else if (event.status === NavigationStatus.POP) {
         activityDispatch({
-          type: ActivityActionType.UPDATE_WAITING_ACTIVITY_BY_PATHNAME,
-          path: records[records.length - 1]
+          type: ActivityActionType.UPDATE_WAITING_ACTIVITY_BY_PATHNAME
         });
 
         setTransitionBuffer((prevState) => {
@@ -49,16 +48,14 @@ function TransitionProvider({ children }: PropsWithChildren) {
             return prevState;
           }
 
-          const flush = () =>
+          const flush = (records: string[]) =>
             new Promise<boolean>((resolve) => {
-              if (transitionTimerRef.current) {
-                clearTimeout(transitionTimerRef.current);
-              }
-
               transitionTimerRef.current = setTimeout(() => {
+                const previousPath = records[records.length - 2] || records[records.length - 1];
+
                 activityDispatch({
                   type: ActivityActionType.UPDATE_PREVIOUS_ACTIVITY_BY_PATHNAME,
-                  path: records[records.length - 2]
+                  path: previousPath
                 });
                 navigationDispatch({
                   type: NavigationActionType.DONE
@@ -74,7 +71,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
         });
       }
     });
-  }, [events, records, activityDispatch, navigationDispatch]);
+  }, [events, activityDispatch, navigationDispatch]);
 
   useEffect(() => {
     if (transitionBuffer.length === 0 || isFlushingRef.current) return;
@@ -82,14 +79,14 @@ function TransitionProvider({ children }: PropsWithChildren) {
     transitionBuffer.forEach(async ({ flush }) => {
       isFlushingRef.current = true;
 
-      const isFlushed = await flush();
+      const isFlushed = await flush(records);
 
       if (isFlushed) {
         setTransitionBuffer((prevState) => prevState.slice(0, prevState.length - 1));
         isFlushingRef.current = false;
       }
     });
-  }, [transitionBuffer]);
+  }, [transitionBuffer, records]);
 
   useEffect(() => {
     return () => {

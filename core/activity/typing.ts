@@ -26,5 +26,4 @@ export type ActivityAction =
     }
   | {
       type: ActivityActionType.UPDATE_WAITING_ACTIVITY_BY_PATHNAME;
-      path: string;
     };

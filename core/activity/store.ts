@@ -10,17 +10,20 @@ export function activityReducer(state: ActivityState, action: ActivityAction): A
       return {
         activities: state.activities,
         previousActivity: state.currentActivity,
-        currentActivity: state.activities.find((activity) =>
-          pathToRegexp(activity.path).regexp.test(action.path)
-        )
-      };
+        currentActivity: state.activities.find((activity) => {
+          const [path] = action.path.split("?");
 
+          return pathToRegexp(activity.path).regexp.test(path);
+        })
+      };
     case ActivityActionType.UPDATE_PREVIOUS_ACTIVITY_BY_PATHNAME:
       return {
         activities: state.activities,
-        previousActivity: state.activities.find((activity) =>
-          pathToRegexp(activity.path).regexp.test(action.path)
-        ),
+        previousActivity: state.activities.find((activity) => {
+          const [path] = action.path.split("?");
+
+          return pathToRegexp(activity.path).regexp.test(path);
+        }),
         currentActivity: state.previousActivity,
         waitingActivity: state.waitingActivity
       };

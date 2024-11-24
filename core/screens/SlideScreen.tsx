@@ -266,7 +266,6 @@ function SlideScreen({ children }: PropsWithChildren) {
           height: "100%",
           transform: `translate3d(${translateX}, 0, 0)`,
           overflow: "auto",
-          boxSizing: "border-box",
           overscrollBehavior: "none"
         }}
       >
