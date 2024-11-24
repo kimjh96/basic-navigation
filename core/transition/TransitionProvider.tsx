@@ -30,7 +30,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
     events.forEach((event) => {
       if (event.status === NavigationStatus.PUSH) {
         activityDispatch({
-          type: ActivityActionType.UPDATE_CURRENT_ACTIVITY_BY_PATHNAME,
+          type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
           path: event.path
         });
         navigationDispatch({
@@ -38,7 +38,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
         });
       } else if (event.status === NavigationStatus.POP) {
         activityDispatch({
-          type: ActivityActionType.UPDATE_WAITING_ACTIVITY_BY_PATHNAME
+          type: ActivityActionType.UPDATE_WAITING_ACTIVITY
         });
 
         setTransitionBuffer((prevState) => {
@@ -54,7 +54,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
                 const previousPath = records[records.length - 2] || records[records.length - 1];
 
                 activityDispatch({
-                  type: ActivityActionType.UPDATE_PREVIOUS_ACTIVITY_BY_PATHNAME,
+                  type: ActivityActionType.UPDATE_PREVIOUS_ACTIVITY,
                   path: previousPath
                 });
                 navigationDispatch({

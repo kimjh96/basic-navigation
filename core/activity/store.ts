@@ -6,7 +6,7 @@ export function activityReducer(state: ActivityState, action: ActivityAction): A
   switch (action.type) {
     case ActivityActionType.SET:
       return action.state;
-    case ActivityActionType.UPDATE_CURRENT_ACTIVITY_BY_PATHNAME:
+    case ActivityActionType.UPDATE_CURRENT_ACTIVITY:
       return {
         activities: state.activities,
         previousActivity: state.currentActivity,
@@ -16,7 +16,7 @@ export function activityReducer(state: ActivityState, action: ActivityAction): A
           return pathToRegexp(activity.path).regexp.test(path);
         })
       };
-    case ActivityActionType.UPDATE_PREVIOUS_ACTIVITY_BY_PATHNAME:
+    case ActivityActionType.UPDATE_PREVIOUS_ACTIVITY:
       return {
         activities: state.activities,
         previousActivity: state.activities.find((activity) => {
@@ -27,7 +27,7 @@ export function activityReducer(state: ActivityState, action: ActivityAction): A
         currentActivity: state.previousActivity,
         waitingActivity: state.waitingActivity
       };
-    case ActivityActionType.UPDATE_WAITING_ACTIVITY_BY_PATHNAME:
+    case ActivityActionType.UPDATE_WAITING_ACTIVITY:
       return {
         activities: state.activities,
         previousActivity: state.previousActivity,
