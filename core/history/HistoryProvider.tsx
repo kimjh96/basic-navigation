@@ -14,8 +14,21 @@ function HistoryProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const handlePopState = () => {
-      navigationDispatch({ type: NavigationActionType.POP, path: window.location.pathname });
-      dispatch({ type: HistoryActionType.POP });
+      const isBack = state.records[state.records.length - 2] === window.location.pathname;
+
+      if (isBack) {
+        dispatch({ type: HistoryActionType.POP });
+        navigationDispatch({
+          type: NavigationActionType.POP,
+          path: window.location.pathname
+        });
+      } else {
+        dispatch({ type: HistoryActionType.PUSH, path: window.location.pathname });
+        navigationDispatch({
+          type: NavigationActionType.PUSH,
+          path: window.location.pathname
+        });
+      }
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -23,7 +36,7 @@ function HistoryProvider({ children }: PropsWithChildren) {
     return () => {
       window.removeEventListener("popstate", handlePopState);
     };
-  }, [dispatch, navigationDispatch]);
+  }, [state.records, dispatch, navigationDispatch]);
 
   return <HistoryContext.Provider value={{ state, dispatch }}>{children}</HistoryContext.Provider>;
 }
