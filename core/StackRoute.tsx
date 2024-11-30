@@ -1,13 +1,14 @@
-import { ReactNode, useContext, useRef } from "react";
+import { PropsWithChildren, useContext, useRef } from "react";
 
 import ActivityContext from "@core/activity/ActivityContext";
 import { Activity } from "@core/activity/typing";
 
-export interface StackRouteProps extends Pick<Activity, "name" | "path"> {
-  activity: ReactNode;
+export interface StackRouteProps {
+  name: Activity["name"];
+  path: Activity["path"];
 }
 
-function StackRoute({ activity, name, path }: StackRouteProps) {
+function StackRoute({ children, name, path }: PropsWithChildren<StackRouteProps>) {
   const {
     state: { currentActivity, previousActivity }
   } = useContext(ActivityContext);
@@ -31,7 +32,7 @@ function StackRoute({ activity, name, path }: StackRouteProps) {
         zIndex: isActiveActivity ? 1 : 0
       }}
     >
-      {activity}
+      {children}
     </div>
   );
 }

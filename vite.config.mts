@@ -36,10 +36,6 @@ export default defineConfig(() => {
           replacement: resolve(__dirname, "hooks")
         },
         {
-          find: `@screens`,
-          replacement: resolve(__dirname, "screens")
-        },
-        {
           find: `@utils`,
           replacement: resolve(__dirname, "utils")
         }

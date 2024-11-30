@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { compile, match } from "path-to-regexp";
 
 import ActivityContext from "@core/activity/ActivityContext";
+import { Activity } from "@core/activity/typing";
 import HistoryContext from "@core/history/HistoryContext";
 import { HistoryActionType } from "@core/history/typing";
 import NavigationContext from "@core/navigation/NavigationContext";
@@ -14,7 +15,7 @@ export default function useNavigation() {
   const { dispatch: navigationDispatch } = useContext(NavigationContext);
 
   return {
-    push: (name: string, params?: object) => {
+    push: (name: Activity["name"], params?: object) => {
       const nextActivity = state.activities.find((activity) => activity.name === name);
 
       if (!nextActivity) return;

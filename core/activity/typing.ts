@@ -1,6 +1,5 @@
 export interface Activity {
-  name: string;
-  path: string;
+  [key: string]: string;
 }
 
 export const enum ActivityActionType {

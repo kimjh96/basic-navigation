@@ -15,8 +15,6 @@
       "@core/*": ["./core/*"],
       "@hooks": ["./hooks"],
       "@hooks/*": ["./hooks/*"],
-      "@screens": ["./screens"],
-      "@screens/*": ["./screens/*"],
       "@utils": ["./utils"],
       "@utils/*": ["./utils/*"]
     }
