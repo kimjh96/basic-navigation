@@ -3,6 +3,7 @@ import { PropsWithChildren, useContext, useEffect, useRef, useState } from "reac
 import ActivityContext from "@core/activity/ActivityContext";
 import { ActivityActionType } from "@core/activity/typing";
 import HistoryContext from "@core/history/HistoryContext";
+import { History } from "@core/history/typing";
 import NavigationContext from "@core/navigation/NavigationContext";
 import { NavigationActionType, NavigationStatus } from "@core/navigation/typing";
 
@@ -19,7 +20,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
   const [transitionBuffer, setTransitionBuffer] = useState<
     Array<{
       id: string;
-      flush: (records: string[]) => Promise<boolean>;
+      flush: (records: History["records"]) => Promise<boolean>;
     }>
   >([]);
 
@@ -31,7 +32,8 @@ function TransitionProvider({ children }: PropsWithChildren) {
       if (event.status === NavigationStatus.PUSH) {
         activityDispatch({
           type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
-          path: event.path
+          path: event.path,
+          params: event.params
         });
         navigationDispatch({
           type: NavigationActionType.DONE
@@ -48,14 +50,15 @@ function TransitionProvider({ children }: PropsWithChildren) {
             return prevState;
           }
 
-          const flush = (records: string[]) =>
+          const flush = (records: History["records"]) =>
             new Promise<boolean>((resolve) => {
               transitionTimerRef.current = setTimeout(() => {
-                const previousPath = records[records.length - 2] || records[records.length - 1];
+                const { path, params } = records[records.length - 2] || records[records.length - 1];
 
                 activityDispatch({
                   type: ActivityActionType.UPDATE_PREVIOUS_ACTIVITY,
-                  path: previousPath
+                  path,
+                  params
                 });
                 navigationDispatch({
                   type: NavigationActionType.DONE

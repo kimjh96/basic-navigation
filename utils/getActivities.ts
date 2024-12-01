@@ -7,6 +7,7 @@ export default function getActivities(
 ) {
   return Children.map(children, ({ props }) => props).map(({ name, path }) => ({
     name,
-    path
+    path,
+    params: {}
   }));
 }

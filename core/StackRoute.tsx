@@ -1,11 +1,11 @@
 import { PropsWithChildren, useContext, useRef } from "react";
 
 import ActivityContext from "@core/activity/ActivityContext";
-import { Activity } from "@core/activity/typing";
+import { BaseActivity } from "@core/activity/typing";
 
 export interface StackRouteProps {
-  name: Activity["name"];
-  path: Activity["path"];
+  name: BaseActivity["name"];
+  path: BaseActivity["path"];
 }
 
 function StackRoute({ children, name, path }: PropsWithChildren<StackRouteProps>) {

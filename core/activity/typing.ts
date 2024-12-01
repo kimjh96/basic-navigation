@@ -1,5 +1,15 @@
-export interface Activity {
+export interface BaseActivity {
   [key: string]: string;
+}
+
+export interface BaseActivityParams {
+  [key: BaseActivity["name"]]: Record<string, string>;
+}
+
+export interface Activity {
+  name: BaseActivity["name"];
+  path: BaseActivity["path"];
+  params: BaseActivityParams[BaseActivity["name"]];
 }
 
 export const enum ActivityActionType {
@@ -18,10 +28,15 @@ export interface ActivityState {
 
 export type ActivityAction =
   | { type: ActivityActionType.SET; state: ActivityState }
-  | { type: ActivityActionType.UPDATE_CURRENT_ACTIVITY; path: string }
+  | {
+      type: ActivityActionType.UPDATE_CURRENT_ACTIVITY;
+      path: string;
+      params: Record<string, string>;
+    }
   | {
       type: ActivityActionType.UPDATE_PREVIOUS_ACTIVITY;
       path: string;
+      params: Record<string, string>;
     }
   | {
       type: ActivityActionType.UPDATE_WAITING_ACTIVITY;

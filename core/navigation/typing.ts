@@ -1,6 +1,6 @@
 export interface Navigation {
   status: NavigationStatus;
-  events: { status: NavigationStatus; path: string }[];
+  events: { status: NavigationStatus; path: string; params: Record<string, string> }[];
 }
 
 export const enum NavigationStatus {
@@ -21,7 +21,15 @@ export const enum NavigationActionType {
 
 export type NavigationAction =
   | { type: NavigationActionType.SET; navigation: Navigation }
-  | { type: NavigationActionType.PUSH; path: string }
-  | { type: NavigationActionType.POP; path: string }
+  | {
+      type: NavigationActionType.PUSH;
+      path: string;
+      params: Record<string, string>;
+    }
+  | {
+      type: NavigationActionType.POP;
+      path: string;
+      params: Record<string, string>;
+    }
   | { type: NavigationActionType.READY }
   | { type: NavigationActionType.DONE };

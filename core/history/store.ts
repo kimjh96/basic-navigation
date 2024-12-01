@@ -6,7 +6,7 @@ export function historyReducer(state: History, action: HistoryAction): History {
       return action.state;
     case HistoryActionType.PUSH:
       return {
-        records: state.records.concat(action.path)
+        records: state.records.concat(action)
       };
     case HistoryActionType.POP:
       return {

@@ -6,27 +6,37 @@ export function activityReducer(state: ActivityState, action: ActivityAction): A
   switch (action.type) {
     case ActivityActionType.SET:
       return action.state;
-    case ActivityActionType.UPDATE_CURRENT_ACTIVITY:
+    case ActivityActionType.UPDATE_CURRENT_ACTIVITY: {
+      const currentActivity = state.activities.find((activity) => {
+        const [path] = action.path.split("?");
+
+        return pathToRegexp(activity.path).regexp.test(path);
+      });
+
+      currentActivity!.params = action.params;
+
       return {
         activities: state.activities,
         previousActivity: state.currentActivity,
-        currentActivity: state.activities.find((activity) => {
-          const [path] = action.path.split("?");
-
-          return pathToRegexp(activity.path).regexp.test(path);
-        })
+        currentActivity
       };
-    case ActivityActionType.UPDATE_PREVIOUS_ACTIVITY:
+    }
+    case ActivityActionType.UPDATE_PREVIOUS_ACTIVITY: {
+      const previousActivity = state.activities.find((activity) => {
+        const [path] = action.path.split("?");
+
+        return pathToRegexp(activity.path).regexp.test(path);
+      });
+
+      previousActivity!.params = action.params;
+
       return {
         activities: state.activities,
-        previousActivity: state.activities.find((activity) => {
-          const [path] = action.path.split("?");
-
-          return pathToRegexp(activity.path).regexp.test(path);
-        }),
+        previousActivity,
         currentActivity: state.previousActivity,
         waitingActivity: state.waitingActivity
       };
+    }
     case ActivityActionType.UPDATE_WAITING_ACTIVITY:
       return {
         activities: state.activities,

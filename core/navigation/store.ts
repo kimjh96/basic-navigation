@@ -14,7 +14,8 @@ export function navigationReducer(state: Navigation, action: NavigationAction): 
         status: NavigationStatus.PUSH,
         events: state.events.concat({
           status: NavigationStatus.PUSH,
-          path: action.path
+          path: action.path,
+          params: action.params
         })
       };
     case NavigationActionType.POP:
@@ -22,7 +23,8 @@ export function navigationReducer(state: Navigation, action: NavigationAction): 
         status: NavigationStatus.POP,
         events: state.events.concat({
           status: NavigationStatus.POP,
-          path: action.path
+          path: action.path,
+          params: action.params
         })
       };
     case NavigationActionType.READY:
