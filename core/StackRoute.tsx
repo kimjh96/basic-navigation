@@ -1,14 +1,18 @@
 import { PropsWithChildren, useContext, useRef } from "react";
 
 import ActivityContext from "@core/activity/ActivityContext";
-import { BaseActivity } from "@core/activity/typing";
+import { BaseActivity, BaseActivityPath } from "@core/activity/typing";
 
-export interface StackRouteProps {
-  name: BaseActivity["name"];
-  path: BaseActivity["path"];
+export interface StackRouteProps<T extends BaseActivity["name"] = BaseActivity["name"]> {
+  name: T;
+  path: BaseActivityPath[T];
 }
 
-function StackRoute({ children, name, path }: PropsWithChildren<StackRouteProps>) {
+function StackRoute<T extends BaseActivity["name"]>({
+  children,
+  name,
+  path
+}: PropsWithChildren<StackRouteProps<T>>) {
   const {
     state: { currentActivity, previousActivity }
   } = useContext(ActivityContext);

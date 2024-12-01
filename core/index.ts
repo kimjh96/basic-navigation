@@ -5,4 +5,4 @@ export { default as SlideScreen } from "./screens/SlideScreen";
 export { default as useActivity } from "./activity/useActivity";
 export { default as useActivityParams } from "./activity/useActivityParams";
 
-export type { BaseActivity, BaseActivityParams } from "./activity/typing";
+export type { BaseActivity, BaseActivityPath, BaseActivityParams } from "./activity/typing";

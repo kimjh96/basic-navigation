@@ -2,13 +2,17 @@ export interface BaseActivity {
   [key: string]: string;
 }
 
+export interface BaseActivityPath {
+  [key: BaseActivity["name"]]: string;
+}
+
 export interface BaseActivityParams {
   [key: BaseActivity["name"]]: Record<string, string>;
 }
 
 export interface Activity {
   name: BaseActivity["name"];
-  path: BaseActivity["path"];
+  path: BaseActivityPath[BaseActivity["name"]];
   params: BaseActivityParams[BaseActivity["name"]];
 }
 
