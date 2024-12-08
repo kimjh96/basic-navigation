@@ -1,1 +1,1 @@
-![basic-stack-router](https://github.com/user-attachments/assets/ca2f4a83-a4ff-4110-ae41-db2e01a9991b)
+![basic-navigation](https://github.com/user-attachments/assets/b23b69e1-e8dd-4559-ae35-fdfae4f38e3d)
