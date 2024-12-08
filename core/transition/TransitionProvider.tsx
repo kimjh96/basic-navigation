@@ -41,19 +41,19 @@ function TransitionProvider({ children }: PropsWithChildren) {
         });
         dispatch({ type: HistoryActionType.PUSH, path: event.path, params: event.params });
       } else if (event.status === NavigationStatus.POP) {
-        activityDispatch({
-          type: ActivityActionType.UPDATE_WAITING_ACTIVITY
-        });
-
         setTransitionBuffer((prevState) => {
-          const hasBuffer = prevState.find((item) => item.id === `${event.path}-${event.status}`);
+          const buffer = prevState.find((item) => item.id === `${event.path}-${event.status}`);
 
-          if (hasBuffer) {
-            return prevState;
+          if (buffer) {
+            return prevState.filter((prevBuffer) => prevBuffer.id !== buffer.id);
           }
 
           const flush = (records: History["records"]) =>
             new Promise<boolean>((resolve) => {
+              activityDispatch({
+                type: ActivityActionType.UPDATE_WAITING_ACTIVITY
+              });
+
               transitionTimerRef.current = setTimeout(() => {
                 const { path, params } =
                   records[records.length - 3] ||
