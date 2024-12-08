@@ -2,7 +2,7 @@ import { Children, cloneElement, isValidElement, PropsWithChildren, useContext }
 
 import { pathToRegexp } from "path-to-regexp";
 
-import type { StackRouteProps } from "@core/StackRoute";
+import type { NavigateProps } from "@core/Navigate";
 
 import HistoryContext from "@core/history/HistoryContext";
 import RendererProvider from "@core/renderer/RendererProvider";
@@ -14,7 +14,7 @@ function Renderer({ children }: PropsWithChildren) {
 
   return records.map(({ path, params }) =>
     Children.map(children, (child) => {
-      if (!isValidElement<StackRouteProps>(child)) {
+      if (!isValidElement<NavigateProps>(child)) {
         return null;
       }
 

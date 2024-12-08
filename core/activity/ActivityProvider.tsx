@@ -2,9 +2,9 @@ import { PropsWithChildren, ReactElement, useReducer } from "react";
 
 import { pathToRegexp } from "path-to-regexp";
 
-import type { StackRouteProps } from "@core/StackRoute";
+import type { NavigateProps } from "@core/Navigate";
 
-import type { StackRouterProps } from "@core/StackRouter";
+import type { NavigatorProps } from "@core/Navigator";
 
 import getActivities from "@utils/getActivities";
 
@@ -14,19 +14,19 @@ import isServer from "@utils/isServer";
 import ActivityContext from "@core/activity/ActivityContext";
 import { activityReducer } from "@core/activity/store";
 
-interface ActivityProviderProps extends Pick<StackRouterProps, "initPath"> {
-  stackRoutes: ReactElement<StackRouteProps> | ReactElement<StackRouteProps>[];
+interface ActivityProviderProps extends Pick<NavigatorProps, "initPath"> {
+  navigates: ReactElement<NavigateProps> | ReactElement<NavigateProps>[];
 }
 
 function ActivityProvider({
   children,
-  stackRoutes,
+  navigates,
   initPath
 }: PropsWithChildren<ActivityProviderProps>) {
   const [state, dispatch] = useReducer(
     activityReducer,
     {
-      activities: getActivities(stackRoutes)
+      activities: getActivities(navigates)
     },
     ({ activities }) => {
       const initialPath = isServer() ? initPath || "/" : window.location.pathname;

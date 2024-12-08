@@ -4,7 +4,6 @@ export interface History {
 }
 
 export const enum HistoryActionType {
-  SET = "SET",
   PUSH = "PUSH",
   POP = "POP"
 }

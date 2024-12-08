@@ -3,19 +3,19 @@ import { PropsWithChildren, useContext, useRef } from "react";
 import ActivityContext from "@core/activity/ActivityContext";
 import { BaseActivity, BaseActivityPath } from "@core/activity/typing";
 
-export interface StackRouteProps<T extends BaseActivity["name"] = BaseActivity["name"]> {
+export interface NavigateProps<T extends BaseActivity["name"] = BaseActivity["name"]> {
   name: T;
   path: BaseActivityPath[T];
   params?: Record<string, string>;
   activePath?: string;
 }
 
-function StackRoute<T extends BaseActivity["name"]>({
+function Navigate<T extends BaseActivity["name"]>({
   children,
   name,
   path,
   activePath
-}: PropsWithChildren<StackRouteProps<T>>) {
+}: PropsWithChildren<NavigateProps<T>>) {
   const {
     state: { currentActivity, previousActivity }
   } = useContext(ActivityContext);
@@ -48,4 +48,4 @@ function StackRoute<T extends BaseActivity["name"]>({
   );
 }
 
-export default StackRoute;
+export default Navigate;

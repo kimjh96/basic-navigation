@@ -1,5 +1,5 @@
-export { default as StackRouter } from "./StackRouter";
-export { default as StackRoute } from "./StackRoute";
+export { default as Navigator } from "./Navigator";
+export { default as Navigate } from "./Navigate";
 export { default as useNavigation } from "./navigation/useNavigation";
 export { default as SlideScreen } from "./screens/SlideScreen";
 export { default as useActivity } from "./activity/useActivity";

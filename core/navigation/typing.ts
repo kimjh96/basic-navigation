@@ -12,7 +12,6 @@ export const enum NavigationStatus {
 }
 
 export const enum NavigationActionType {
-  SET = "SET_NAVIGATION",
   PUSH = "PUSH_NAVIGATION",
   POP = "POP_NAVIGATION",
   READY = "READY_NAVIGATION",

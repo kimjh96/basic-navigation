@@ -1,9 +1,9 @@
 import { Children, ReactElement } from "react";
 
-import type { StackRouteProps } from "@core/StackRoute";
+import type { NavigateProps } from "@core/Navigate";
 
 export default function getActivities(
-  children: ReactElement<StackRouteProps> | ReactElement<StackRouteProps>[]
+  children: ReactElement<NavigateProps> | ReactElement<NavigateProps>[]
 ) {
   return Children.map(children, ({ props }) => props).map(({ name, path }) => ({
     name,
