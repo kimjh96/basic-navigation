@@ -7,8 +7,6 @@ import {
 
 export function navigationReducer(state: Navigation, action: NavigationAction): Navigation {
   switch (action.type) {
-    case NavigationActionType.SET:
-      return action.navigation;
     case NavigationActionType.PUSH:
       return {
         status: NavigationStatus.PUSH,

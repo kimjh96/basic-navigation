@@ -9,6 +9,7 @@ interface HistoryContextProps {
 
 const HistoryContext = createContext<HistoryContextProps>({
   state: {
+    index: 0,
     records: []
   },
   dispatch: () => {}

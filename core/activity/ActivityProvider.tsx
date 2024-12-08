@@ -31,12 +31,14 @@ function ActivityProvider({
     ({ activities }) => {
       const initialPath = isServer() ? initPath || "/" : window.location.pathname;
       const initialSearch = isServer() ? initialPath.split("?")[1] || "" : window.location.search;
-      const [currentActivity] = activities.filter(({ path }) =>
-        pathToRegexp(path || "/").regexp.test(initialPath)
-      );
       const paths = activities.map(({ path }) => path);
-
-      currentActivity.params = getParams(paths, initialPath, initialSearch);
+      const [currentActivity] = activities
+        .filter(({ path }) => pathToRegexp(path || "/").regexp.test(initialPath))
+        .map((activity) => ({
+          ...activity,
+          params: getParams(paths, initialPath, initialSearch),
+          activePath: initialPath
+        }));
 
       return {
         activities,

@@ -5,13 +5,14 @@ import { compile, match } from "path-to-regexp";
 import ActivityContext from "@core/activity/ActivityContext";
 import { BaseActivityParams, BaseActivity } from "@core/activity/typing";
 import HistoryContext from "@core/history/HistoryContext";
-import { HistoryActionType } from "@core/history/typing";
 import NavigationContext from "@core/navigation/NavigationContext";
 import { NavigationActionType } from "@core/navigation/typing";
 
 export default function useNavigation() {
   const { state } = useContext(ActivityContext);
-  const { dispatch } = useContext(HistoryContext);
+  const {
+    state: { index }
+  } = useContext(HistoryContext);
   const { dispatch: navigationDispatch } = useContext(NavigationContext);
 
   return {
@@ -38,8 +39,7 @@ export default function useNavigation() {
 
       nextPath = queryStringParams ? `${nextPath}?${queryStringParams}` : nextPath;
 
-      window.history.pushState(null, "", nextPath);
-      dispatch({ type: HistoryActionType.PUSH, path: nextPath, params: nextParams });
+      window.history.pushState({ index: index + 1 }, "", nextPath);
       navigationDispatch({
         type: NavigationActionType.PUSH,
         path: nextPath,

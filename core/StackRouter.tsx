@@ -5,6 +5,7 @@ import { StackRouteProps } from "@core/StackRoute";
 import ActivityProvider from "@core/activity/ActivityProvider";
 import HistoryProvider from "@core/history/HistoryProvider";
 import NavigationProvider from "@core/navigation/NavigationProvider";
+import Renderer from "@core/renderer/Renderer";
 import TransitionProvider from "@core/transition/TransitionProvider";
 
 export interface StackRouterProps {
@@ -17,7 +18,9 @@ function StackRouter({ children, initPath }: StackRouterProps) {
     <ActivityProvider stackRoutes={children} initPath={initPath}>
       <NavigationProvider>
         <HistoryProvider initPath={initPath}>
-          <TransitionProvider>{children}</TransitionProvider>
+          <TransitionProvider>
+            <Renderer>{children}</Renderer>
+          </TransitionProvider>
         </HistoryProvider>
       </NavigationProvider>
     </ActivityProvider>

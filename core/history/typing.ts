@@ -1,4 +1,5 @@
 export interface History {
+  index: number;
   records: { path: string; params: Record<string, string> }[];
 }
 
@@ -9,6 +10,5 @@ export const enum HistoryActionType {
 }
 
 export type HistoryAction =
-  | { type: HistoryActionType.SET; state: History }
   | { type: HistoryActionType.PUSH; path: string; params: Record<string, string> }
   | { type: HistoryActionType.POP };

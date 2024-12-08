@@ -20,7 +20,6 @@ export const enum NavigationActionType {
 }
 
 export type NavigationAction =
-  | { type: NavigationActionType.SET; navigation: Navigation }
   | {
       type: NavigationActionType.PUSH;
       path: string;

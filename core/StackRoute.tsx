@@ -6,12 +6,15 @@ import { BaseActivity, BaseActivityPath } from "@core/activity/typing";
 export interface StackRouteProps<T extends BaseActivity["name"] = BaseActivity["name"]> {
   name: T;
   path: BaseActivityPath[T];
+  params?: Record<string, string>;
+  activePath?: string;
 }
 
 function StackRoute<T extends BaseActivity["name"]>({
   children,
   name,
-  path
+  path,
+  activePath
 }: PropsWithChildren<StackRouteProps<T>>) {
   const {
     state: { currentActivity, previousActivity }
@@ -19,16 +22,20 @@ function StackRoute<T extends BaseActivity["name"]>({
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const isPreviousActivity = previousActivity?.name === name;
-  const isActiveActivity = currentActivity?.name === name;
+  if (
+    (currentActivity?.name !== name || currentActivity?.activePath !== activePath) &&
+    (previousActivity?.name !== name || previousActivity?.activePath !== activePath)
+  )
+    return null;
 
-  if (currentActivity?.name !== name && previousActivity?.name !== name) return null;
+  const isActiveActivity =
+    currentActivity?.name === name && currentActivity?.activePath === activePath;
 
   return (
     <div
       ref={ref}
       data-path={path}
-      data-root-activity={isActiveActivity && isPreviousActivity}
+      data-active-path={activePath}
       style={{
         position: "fixed",
         width: "100%",

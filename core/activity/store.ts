@@ -4,16 +4,18 @@ import { ActivityAction, ActivityActionType, ActivityState } from "@core/activit
 
 export function activityReducer(state: ActivityState, action: ActivityAction): ActivityState {
   switch (action.type) {
-    case ActivityActionType.SET:
-      return action.state;
     case ActivityActionType.UPDATE_CURRENT_ACTIVITY: {
-      const currentActivity = state.activities.find((activity) => {
-        const [path] = action.path.split("?");
+      const [currentActivity] = state.activities
+        .filter((activity) => {
+          const [path] = action.path.split("?");
 
-        return pathToRegexp(activity.path).regexp.test(path);
-      });
-
-      currentActivity!.params = action.params;
+          return pathToRegexp(activity.path).regexp.test(path);
+        })
+        .map((activity) => ({
+          ...activity,
+          params: action.params,
+          activePath: action.path
+        }));
 
       return {
         activities: state.activities,
@@ -22,19 +24,22 @@ export function activityReducer(state: ActivityState, action: ActivityAction): A
       };
     }
     case ActivityActionType.UPDATE_PREVIOUS_ACTIVITY: {
-      const previousActivity = state.activities.find((activity) => {
-        const [path] = action.path.split("?");
+      const [previousActivity] = state.activities
+        .filter((activity) => {
+          const [path] = action.path.split("?");
 
-        return pathToRegexp(activity.path).regexp.test(path);
-      });
-
-      previousActivity!.params = action.params;
+          return pathToRegexp(activity.path).regexp.test(path);
+        })
+        .map((activity) => ({
+          ...activity,
+          params: action.params,
+          activePath: action.path
+        }));
 
       return {
         activities: state.activities,
         previousActivity,
-        currentActivity: state.previousActivity,
-        waitingActivity: state.waitingActivity
+        currentActivity: state.previousActivity
       };
     }
     case ActivityActionType.UPDATE_WAITING_ACTIVITY:

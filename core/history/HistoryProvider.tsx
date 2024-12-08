@@ -8,7 +8,6 @@ import isServer from "@utils/isServer";
 import ActivityContext from "@core/activity/ActivityContext";
 import HistoryContext from "@core/history/HistoryContext";
 import { historyReducer } from "@core/history/store";
-import { HistoryActionType } from "@core/history/typing";
 import NavigationContext from "@core/navigation/NavigationContext";
 import { NavigationActionType } from "@core/navigation/typing";
 
@@ -20,6 +19,7 @@ function HistoryProvider({
   const [state, dispatch] = useReducer(
     historyReducer,
     {
+      index: 0,
       records: []
     },
     () => {
@@ -27,6 +27,7 @@ function HistoryProvider({
       const initialSearch = isServer() ? initialPath.split("?")[1] || "" : window.location.search;
 
       return {
+        index: 0,
         records: [
           {
             path: initialPath,
@@ -39,26 +40,33 @@ function HistoryProvider({
   const { dispatch: navigationDispatch } = useContext(NavigationContext);
 
   useEffect(() => {
-    const handlePopState = () => {
+    window.history.replaceState({ index: 0 }, "");
+  }, []);
+
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      const nextIndex = e.state?.index;
       const { pathname, search } = window.location;
       const path = `${pathname}${search}`;
       const params = getParams(paths, pathname, search);
-      const isBack = state.records[state.records.length - 2]?.path === path;
 
-      if (isBack) {
-        dispatch({ type: HistoryActionType.POP });
-        navigationDispatch({
-          type: NavigationActionType.POP,
-          path,
-          params
-        });
-      } else {
-        dispatch({ type: HistoryActionType.PUSH, path, params });
-        navigationDispatch({
-          type: NavigationActionType.PUSH,
-          path,
-          params
-        });
+      if (nextIndex !== undefined) {
+        const isBack = nextIndex < state.index;
+        const isPush = nextIndex > state.index;
+
+        if (isBack) {
+          navigationDispatch({
+            type: NavigationActionType.POP,
+            path,
+            params
+          });
+        } else if (isPush) {
+          navigationDispatch({
+            type: NavigationActionType.PUSH,
+            path,
+            params
+          });
+        }
       }
     };
 
@@ -67,7 +75,7 @@ function HistoryProvider({
     return () => {
       window.removeEventListener("popstate", handlePopState);
     };
-  }, [paths, state.records, dispatch, navigationDispatch]);
+  }, [paths, state.index, dispatch, navigationDispatch]);
 
   return <HistoryContext.Provider value={{ state, dispatch }}>{children}</HistoryContext.Provider>;
 }

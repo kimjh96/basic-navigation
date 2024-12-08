@@ -169,9 +169,9 @@ function SlideScreen({ children }: PropsWithChildren) {
     let mountDelayTimer: ReturnType<typeof setTimeout>;
 
     const stackRouteElement = ref.current?.parentElement;
-    const path = stackRouteElement?.getAttribute("data-path");
+    const activePath = stackRouteElement?.getAttribute("data-active-path");
 
-    if (path === currentActivity?.path) {
+    if (activePath === currentActivity?.activePath) {
       if (ref.current) {
         ref.current.style.transition = "transform 0.3s";
       }
@@ -197,23 +197,22 @@ function SlideScreen({ children }: PropsWithChildren) {
         clearTimeout(mountDelayTimer);
       }
     };
-  }, [currentActivity?.path]);
+  }, [currentActivity?.activePath]);
 
   useEffect(() => {
     const stackRouteElement = ref.current?.parentElement;
-    const path = stackRouteElement?.getAttribute("data-path");
+    const activePath = stackRouteElement?.getAttribute("data-active-path");
 
-    if (path === previousActivity?.path) {
+    if (activePath === previousActivity?.activePath) {
       setTranslateX(0);
     }
-  }, [previousActivity?.path]);
+  }, [previousActivity?.activePath]);
 
   useEffect(() => {
     const stackRouteElement = ref.current?.parentElement;
-    const path = stackRouteElement?.getAttribute("data-path");
-    const rootActivity = stackRouteElement?.getAttribute("data-root-activity");
+    const activePath = stackRouteElement?.getAttribute("data-active-path");
 
-    if (path === waitingActivity?.path && !translateX && rootActivity === "false") {
+    if (activePath === waitingActivity?.activePath && !translateX) {
       const previousActivityElement = stackRouteElement?.previousElementSibling;
 
       if (previousActivityElement) {
@@ -227,7 +226,7 @@ function SlideScreen({ children }: PropsWithChildren) {
 
       setTranslateX("100%");
     }
-  }, [waitingActivity?.path, translateX]);
+  }, [waitingActivity?.activePath, translateX]);
 
   return (
     <>
