@@ -39,7 +39,11 @@ export default function useNavigation() {
 
       nextPath = queryStringParams ? `${nextPath}?${queryStringParams}` : nextPath;
 
-      window.history.pushState({ index: index + 1 }, "", nextPath);
+      window.history.pushState(
+        { index: index + 1, scrollTop: window.currentScreen?.scrollTop || 0 },
+        "",
+        nextPath
+      );
       navigationDispatch({
         type: NavigationActionType.PUSH,
         path: nextPath,

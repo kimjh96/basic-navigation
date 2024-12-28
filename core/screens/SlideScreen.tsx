@@ -172,6 +172,8 @@ function SlideScreen({ children }: PropsWithChildren) {
     const activePath = stackRouteElement?.getAttribute("data-active-path");
 
     if (activePath === currentActivity?.activePath) {
+      window.currentScreen = ref.current;
+
       if (ref.current) {
         ref.current.style.transition = "transform 0.3s";
       }
@@ -180,6 +182,9 @@ function SlideScreen({ children }: PropsWithChildren) {
         const previousActivityElement = stackRouteElement?.previousElementSibling;
 
         if (previousActivityElement) {
+          previousActivityElement.lastElementChild!.scrollTop =
+            window.history.state?.scrollTop || 0;
+
           const style = previousActivityElement.getAttribute("style");
           const styleObject = convertStyleStringToObject(style || "");
           styleObject.transition = "transform 0.3s";
@@ -265,7 +270,8 @@ function SlideScreen({ children }: PropsWithChildren) {
           height: "100%",
           transform: `translate3d(${translateX}, 0, 0)`,
           overflow: "auto",
-          overscrollBehavior: "none"
+          overscrollBehavior: "none",
+          backgroundColor: "white"
         }}
       >
         {children}
@@ -275,3 +281,9 @@ function SlideScreen({ children }: PropsWithChildren) {
 }
 
 export default SlideScreen;
+
+declare global {
+  interface Window {
+    currentScreen: HTMLDivElement | null;
+  }
+}
