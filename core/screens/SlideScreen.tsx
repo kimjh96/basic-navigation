@@ -8,7 +8,11 @@ import NavigationContext from "@core/navigation/NavigationContext";
 import { NavigationStatus } from "@core/navigation/typing";
 import useDebounceCallback from "@hooks/useDebounceCallback";
 
-function SlideScreen({ children }: PropsWithChildren) {
+interface SlideScreenProps {
+  backgroundColor?: string;
+}
+
+function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<SlideScreenProps>) {
   const {
     state: { currentActivity, previousActivity, waitingActivity }
   } = useContext(ActivityContext);
@@ -271,7 +275,7 @@ function SlideScreen({ children }: PropsWithChildren) {
           transform: `translate3d(${translateX}, 0, 0)`,
           overflow: "auto",
           overscrollBehavior: "none",
-          backgroundColor: "white"
+          backgroundColor
         }}
       >
         {children}
