@@ -1,7 +1,7 @@
 import { TouchEvent, PropsWithChildren, useEffect, useState, useRef, useContext } from "react";
 
-import convertStyleObjectToString from "@utils/convertStyleObjectToString";
-import convertStyleStringToObject from "@utils/convertStyleStringToObject";
+import styleObjectToString from "@utils/styleObjectToString";
+import styleStringToObject from "@utils/styleStringToObject";
 
 import ActivityContext from "@core/activity/ActivityContext";
 import NavigationContext from "@core/navigation/NavigationContext";
@@ -40,11 +40,11 @@ function SlideScreen({ children }: PropsWithChildren) {
 
     if (previousActivityElement) {
       const style = previousActivityElement.getAttribute("style");
-      const styleObject = convertStyleStringToObject(style || "");
+      const styleObject = styleStringToObject(style || "");
       styleObject.transition = "none";
       styleObject.transform = `translate3d(-100px, 0, 0)`;
 
-      previousActivityElement.setAttribute("style", convertStyleObjectToString(styleObject));
+      previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
     }
   };
 
@@ -58,11 +58,11 @@ function SlideScreen({ children }: PropsWithChildren) {
     if (isTriggered) {
       if (previousActivityElement) {
         const style = previousActivityElement.getAttribute("style");
-        const styleObject = convertStyleStringToObject(style || "");
+        const styleObject = styleStringToObject(style || "");
         styleObject.transition = "transform 0.3s";
         styleObject.transform = `translate3d(0, 0, 0)`;
 
-        previousActivityElement.setAttribute("style", convertStyleObjectToString(styleObject));
+        previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
       }
 
       e.currentTarget.style.transform = "translate3d(100%, 0, 0)";
@@ -70,11 +70,11 @@ function SlideScreen({ children }: PropsWithChildren) {
     } else {
       if (previousActivityElement) {
         const style = previousActivityElement.getAttribute("style");
-        const styleObject = convertStyleStringToObject(style || "");
+        const styleObject = styleStringToObject(style || "");
         styleObject.transition = "transform 0.3s";
         styleObject.transform = `translate3d(-100px, 0, 0)`;
 
-        previousActivityElement.setAttribute("style", convertStyleObjectToString(styleObject));
+        previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
       }
 
       e.currentTarget.style.transform = "translate3d(0, 0, 0)";
@@ -120,11 +120,11 @@ function SlideScreen({ children }: PropsWithChildren) {
 
       if (notYet) {
         const style = previousActivityElement?.getAttribute("style");
-        const styleObject = convertStyleStringToObject(style || "");
+        const styleObject = styleStringToObject(style || "");
 
         styleObject.transform = `translate3d(-100px, 0, 0)`;
 
-        previousActivityElement?.setAttribute("style", convertStyleObjectToString(styleObject));
+        previousActivityElement?.setAttribute("style", styleObjectToString(styleObject));
         currentActivityElement.style.transition = "transform 0.3s";
         currentActivityElement.style.transform = "translate3d(0, 0, 0)";
         currentClientXRef.current = 0;
@@ -141,11 +141,11 @@ function SlideScreen({ children }: PropsWithChildren) {
         backdropRef.current!.style.opacity = `${1 - clampedProgress}`;
 
         const style = previousActivityElement.getAttribute("style");
-        const styleObject = convertStyleStringToObject(style || "");
+        const styleObject = styleStringToObject(style || "");
         styleObject.transition = "none";
         styleObject.transform = `translate3d(calc(-100px + ${clampedProgressPercentage}px), 0, 0)`;
 
-        previousActivityElement.setAttribute("style", convertStyleObjectToString(styleObject));
+        previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
       }
 
       currentActivityElement.style.transition = "none";
@@ -186,11 +186,11 @@ function SlideScreen({ children }: PropsWithChildren) {
             window.history.state?.scrollTop || 0;
 
           const style = previousActivityElement.getAttribute("style");
-          const styleObject = convertStyleStringToObject(style || "");
+          const styleObject = styleStringToObject(style || "");
           styleObject.transition = "transform 0.3s";
           styleObject.transform = `translate3d(-100px, 0, 0)`;
 
-          previousActivityElement.setAttribute("style", convertStyleObjectToString(styleObject));
+          previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
         }
 
         setTranslateX(0);
@@ -222,11 +222,11 @@ function SlideScreen({ children }: PropsWithChildren) {
 
       if (previousActivityElement) {
         const style = previousActivityElement.getAttribute("style");
-        const styleObject = convertStyleStringToObject(style || "");
+        const styleObject = styleStringToObject(style || "");
         styleObject.transition = "transform 0.3s";
         styleObject.transform = `translate3d(0, 0, 0)`;
 
-        previousActivityElement.setAttribute("style", convertStyleObjectToString(styleObject));
+        previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
       }
 
       setTranslateX("100%");
