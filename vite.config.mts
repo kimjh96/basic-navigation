@@ -11,7 +11,7 @@ export default defineConfig(() => {
     build: {
       lib: {
         entry: "core/index.ts",
-        name: "basic-stack-router",
+        name: "basic-navigation",
         formats: ["es", "cjs"],
         fileName: (format) => (format === "es" ? `index.es.js` : `index.js`)
       },
