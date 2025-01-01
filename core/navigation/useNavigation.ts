@@ -50,6 +50,6 @@ export default function useNavigation() {
         params: nextParams
       });
     },
-    pop: () => window.history.back()
+    back: () => window.history.back()
   };
 }
