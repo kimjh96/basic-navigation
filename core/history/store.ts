@@ -12,6 +12,12 @@ export function historyReducer(state: History, action: HistoryAction): History {
         index: state.index + 1,
         records: state.records.concat(action)
       };
+    case HistoryActionType.REPLACE:
+      state.records.splice(state.records.length - 2, 1);
+      return {
+        index: state.index - 1,
+        records: state.records
+      };
     case HistoryActionType.BACK:
       return {
         index: state.index - 1,

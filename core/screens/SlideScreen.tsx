@@ -1,4 +1,4 @@
-import { TouchEvent, PropsWithChildren, useEffect, useState, useRef, useContext } from "react";
+import { PropsWithChildren, TouchEvent, useContext, useEffect, useRef, useState } from "react";
 
 import styleObjectToString from "@utils/styleObjectToString";
 import styleStringToObject from "@utils/styleStringToObject";
@@ -21,7 +21,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
   } = useContext(NavigationContext);
 
   const [translateX, setTranslateX] = useState<string | number>(
-    status === NavigationStatus.READY ? 0 : "100%"
+    NavigationStatus.READY === status ? 0 : "100%"
   );
 
   const ref = useRef<HTMLDivElement>(null);

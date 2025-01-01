@@ -55,8 +55,9 @@ function HistoryProvider({
 
       if (nextIndex !== undefined) {
         const isBack = nextIndex < state.index;
-        const isPush = nextIndex > state.index && status === NavigationStatus.PUSH;
-        const isStackPush = nextIndex > state.index && status === NavigationStatus.STACK_PUSH;
+        const isPush = status === NavigationStatus.PUSH;
+        const isStackPush = status === NavigationStatus.STACK_PUSH;
+        const isReplace = status === NavigationStatus.REPLACE;
 
         if (isBack) {
           navigationDispatch({
@@ -73,6 +74,12 @@ function HistoryProvider({
         } else if (isStackPush) {
           navigationDispatch({
             type: NavigationActionType.STACK_PUSH,
+            path,
+            params
+          });
+        } else if (isReplace) {
+          navigationDispatch({
+            type: NavigationActionType.PUSH,
             path,
             params
           });

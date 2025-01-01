@@ -98,6 +98,44 @@ export default function useNavigation() {
         params: nextParams as Record<string, string>
       });
     },
+    replace: <T extends BaseActivity["name"]>(name: T, params: BaseActivityParams[T] = {}) => {
+      const nextActivity = state.activities.find((activity) => activity.name === name);
+
+      if (!nextActivity) return;
+
+      const formattedParams = Object.fromEntries(
+        Object.entries(params).map(([key, value]) => [key, String(value)])
+      );
+      let nextPath = compile(nextActivity.path)(formattedParams);
+      const nextPathMatch = match(nextActivity.path)(nextPath);
+      const nextPathVariableKeys = nextPathMatch ? Object.keys(nextPathMatch?.params) : [];
+      const nextParams = { ...formattedParams };
+
+      nextPathVariableKeys.forEach((key) => {
+        delete formattedParams[key];
+      });
+
+      const queryStringParams = new URLSearchParams(
+        Object.entries(formattedParams).map(([key, value]) => [key, String(value)])
+      ).toString();
+
+      nextPath = queryStringParams ? `${nextPath}?${queryStringParams}` : nextPath;
+
+      window.history.replaceState(
+        {
+          index,
+          status: NavigationStatus.REPLACE,
+          scrollTop: window.scrollContainer?.scrollTop || 0
+        },
+        "",
+        nextPath
+      );
+      navigationDispatch({
+        type: NavigationActionType.REPLACE,
+        path: nextPath,
+        params: nextParams
+      });
+    },
     back: () => window.history.back()
   };
 }

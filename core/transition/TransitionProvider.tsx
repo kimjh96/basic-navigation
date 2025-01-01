@@ -25,7 +25,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
     }>
   >([]);
 
-  const transitionTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const transitionTimerRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
   const isFlushingRef = useRef(false);
 
   useEffect(() => {
@@ -37,9 +37,33 @@ function TransitionProvider({ children }: PropsWithChildren) {
           params: event.params
         });
         navigationDispatch({
-          type: NavigationActionType.DONE
+          type: NavigationActionType.NAVIGATING
         });
         dispatch({ type: HistoryActionType.PUSH, path: event.path, params: event.params });
+
+        setTransitionBuffer((prevState) => {
+          const id = `${event.path}-${event.status}`;
+          const transition = prevState.find((item) => item.id === id);
+
+          if (transition) {
+            return prevState.filter((prevTransition) => prevTransition.id !== transition.id);
+          }
+
+          const flush = () =>
+            new Promise<boolean>((resolve) => {
+              transitionTimerRef.current[id] = setTimeout(() => {
+                navigationDispatch({
+                  type: NavigationActionType.DONE
+                });
+                resolve(true);
+              }, 300);
+            });
+
+          return prevState.concat({
+            id,
+            flush
+          });
+        });
       } else if (event.status === NavigationStatus.STACK_PUSH) {
         activityDispatch({
           type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
@@ -47,19 +71,97 @@ function TransitionProvider({ children }: PropsWithChildren) {
           params: event.params
         });
         navigationDispatch({
-          type: NavigationActionType.DONE
+          type: NavigationActionType.NAVIGATING
         });
         dispatch({ type: HistoryActionType.STACK_PUSH, path: event.path, params: event.params });
-      } else if (event.status === NavigationStatus.BACK) {
-        setTransitionBuffer((prevState) => {
-          const buffer = prevState.find((item) => item.id === `${event.path}-${event.status}`);
 
-          if (buffer) {
-            return prevState.filter((prevBuffer) => prevBuffer.id !== buffer.id);
+        setTransitionBuffer((prevState) => {
+          const id = `${event.path}-${event.status}`;
+          const transition = prevState.find((item) => item.id === id);
+
+          if (transition) {
+            return prevState.filter((prevTransition) => prevTransition.id !== transition.id);
+          }
+
+          const flush = () =>
+            new Promise<boolean>((resolve) => {
+              transitionTimerRef.current[id] = setTimeout(() => {
+                navigationDispatch({
+                  type: NavigationActionType.DONE
+                });
+                resolve(true);
+              }, 300);
+            });
+
+          return prevState.concat({
+            id,
+            flush
+          });
+        });
+      } else if (event.status === NavigationStatus.REPLACE) {
+        activityDispatch({
+          type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
+          path: event.path,
+          params: event.params
+        });
+        navigationDispatch({
+          type: NavigationActionType.NAVIGATING
+        });
+        dispatch({ type: HistoryActionType.PUSH, path: event.path, params: event.params });
+
+        setTransitionBuffer((prevState) => {
+          const id = `${event.path}-${event.status}`;
+          const transition = prevState.find((item) => item.id === id);
+
+          if (transition) {
+            return prevState.filter((prevTransition) => prevTransition.id !== transition.id);
           }
 
           const flush = (records: History["records"]) =>
             new Promise<boolean>((resolve) => {
+              transitionTimerRef.current[id] = setTimeout(() => {
+                const { path, params } =
+                  records[records.length - 3] ||
+                  records[records.length - 2] ||
+                  records[records.length - 1];
+
+                activityDispatch({
+                  type: ActivityActionType.UPDATE_SPECIFY_PREVIOUS_ACTIVITY,
+                  path,
+                  params
+                });
+                navigationDispatch({
+                  type: NavigationActionType.DONE
+                });
+                dispatch({
+                  type: HistoryActionType.REPLACE,
+                  path: event.path,
+                  params: event.params
+                });
+                resolve(true);
+              }, 300);
+            });
+
+          return prevState.concat({
+            id,
+            flush
+          });
+        });
+      } else if (event.status === NavigationStatus.BACK) {
+        setTransitionBuffer((prevState) => {
+          const id = `${event.path}-${event.status}`;
+          const transition = prevState.find((item) => item.id === id);
+
+          if (transition) {
+            return prevState.filter((prevTransition) => prevTransition.id !== transition.id);
+          }
+
+          const flush = (records: History["records"]) =>
+            new Promise<boolean>((resolve) => {
+              navigationDispatch({
+                type: NavigationActionType.NAVIGATING
+              });
+
               const lastRecord = records[records.length - 1];
 
               if (lastRecord.type !== HistoryActionType.STACK_PUSH) {
@@ -68,7 +170,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
                 });
               }
 
-              transitionTimerRef.current = setTimeout(() => {
+              transitionTimerRef.current[id] = setTimeout(() => {
                 const { path, params } =
                   records[records.length - 3] || records[records.length - 2] || lastRecord;
 
@@ -86,7 +188,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
             });
 
           return prevState.concat({
-            id: `${event.path}-${event.status}`,
+            id,
             flush
           });
         });
@@ -112,9 +214,13 @@ function TransitionProvider({ children }: PropsWithChildren) {
   }, [transitionBuffer, records]);
 
   useEffect(() => {
+    const transitionTimer = transitionTimerRef.current;
+
     return () => {
-      if (transitionTimerRef.current) {
-        clearTimeout(transitionTimerRef.current);
+      for (const transitionId in transitionTimer) {
+        if (transitionTimer[transitionId]) {
+          clearTimeout(transitionTimer[transitionId]);
+        }
       }
     };
   }, []);

@@ -20,6 +20,7 @@ export interface Activity {
 export const enum ActivityActionType {
   UPDATE_CURRENT_ACTIVITY = "UPDATE_CURRENT_ACTIVITY",
   UPDATE_PREVIOUS_ACTIVITY = "UPDATE_PREVIOUS_ACTIVITY",
+  UPDATE_SPECIFY_PREVIOUS_ACTIVITY = "UPDATE_SPECIFY_PREVIOUS_ACTIVITY",
   UPDATE_WAITING_ACTIVITY = "UPDATE_WAITING_ACTIVITY"
 }
 
@@ -39,6 +40,11 @@ export type ActivityAction =
     }
   | {
       type: ActivityActionType.UPDATE_PREVIOUS_ACTIVITY;
+      path: string;
+      params: Record<string, string>;
+    }
+  | {
+      type: ActivityActionType.UPDATE_SPECIFY_PREVIOUS_ACTIVITY;
       path: string;
       params: Record<string, string>;
     }

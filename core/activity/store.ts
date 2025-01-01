@@ -42,6 +42,25 @@ export function activityReducer(state: ActivityState, action: ActivityAction): A
         currentActivity: state.previousActivity
       };
     }
+    case ActivityActionType.UPDATE_SPECIFY_PREVIOUS_ACTIVITY: {
+      const [previousActivity] = state.activities
+        .filter((activity) => {
+          const [path] = action.path.split("?");
+
+          return pathToRegexp(activity.path).regexp.test(path);
+        })
+        .map((activity) => ({
+          ...activity,
+          params: action.params,
+          activePath: action.path
+        }));
+
+      return {
+        activities: state.activities,
+        previousActivity,
+        currentActivity: state.currentActivity
+      };
+    }
     case ActivityActionType.UPDATE_WAITING_ACTIVITY:
       return {
         activities: state.activities,
