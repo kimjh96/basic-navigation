@@ -12,7 +12,14 @@ function Renderer({ children }: PropsWithChildren) {
     state: { records }
   } = useContext(HistoryContext);
 
-  return records.map(({ path, params }) =>
+  return Array.from(
+    new Map(
+      records.map((record) => {
+        const [originPath] = record.path.split("?");
+        return [originPath, { ...record, path: record.path }];
+      })
+    ).values()
+  ).map(({ path, params }) =>
     Children.map(children, (child) => {
       if (!isValidElement<NavigateProps>(child)) {
         return null;

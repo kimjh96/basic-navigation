@@ -8,8 +8,9 @@ import isServer from "@utils/isServer";
 import ActivityContext from "@core/activity/ActivityContext";
 import HistoryContext from "@core/history/HistoryContext";
 import { historyReducer } from "@core/history/store";
+import { HistoryActionType } from "@core/history/typing";
 import NavigationContext from "@core/navigation/NavigationContext";
-import { NavigationActionType } from "@core/navigation/typing";
+import { NavigationActionType, NavigationStatus } from "@core/navigation/typing";
 
 function HistoryProvider({
   children,
@@ -30,6 +31,7 @@ function HistoryProvider({
         index: 0,
         records: [
           {
+            type: HistoryActionType.PUSH,
             path: initialPath,
             params: getParams(paths, initialPath, initialSearch)
           }
@@ -46,13 +48,15 @@ function HistoryProvider({
   useEffect(() => {
     const handlePopState = (e: PopStateEvent) => {
       const nextIndex = e.state?.index;
+      const status = e.state?.status;
       const { pathname, search } = window.location;
       const path = `${pathname}${search}`;
       const params = getParams(paths, pathname, search);
 
       if (nextIndex !== undefined) {
         const isBack = nextIndex < state.index;
-        const isPush = nextIndex > state.index;
+        const isPush = nextIndex > state.index && status === NavigationStatus.PUSH;
+        const isStackPush = nextIndex > state.index && status === NavigationStatus.STACK_PUSH;
 
         if (isBack) {
           navigationDispatch({
@@ -63,6 +67,12 @@ function HistoryProvider({
         } else if (isPush) {
           navigationDispatch({
             type: NavigationActionType.PUSH,
+            path,
+            params
+          });
+        } else if (isStackPush) {
+          navigationDispatch({
+            type: NavigationActionType.STACK_PUSH,
             path,
             params
           });

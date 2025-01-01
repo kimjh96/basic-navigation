@@ -16,6 +16,15 @@ export function navigationReducer(state: Navigation, action: NavigationAction): 
           params: action.params
         })
       };
+    case NavigationActionType.STACK_PUSH:
+      return {
+        status: NavigationStatus.PUSH,
+        events: state.events.concat({
+          status: NavigationStatus.STACK_PUSH,
+          path: action.path,
+          params: action.params
+        })
+      };
     case NavigationActionType.POP:
       return {
         status: NavigationStatus.POP,
