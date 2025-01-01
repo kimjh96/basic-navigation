@@ -40,7 +40,7 @@ export default function useNavigation() {
       nextPath = queryStringParams ? `${nextPath}?${queryStringParams}` : nextPath;
 
       window.history.pushState(
-        { index: index + 1, scrollTop: window.currentScreen?.scrollTop || 0 },
+        { index: index + 1, scrollTop: window.scrollContainer?.scrollTop || 0 },
         "",
         nextPath
       );

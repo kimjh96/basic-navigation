@@ -176,7 +176,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
     const activePath = stackRouteElement?.getAttribute("data-active-path");
 
     if (activePath === currentActivity?.activePath) {
-      window.currentScreen = ref.current;
+      window.scrollContainer = ref.current;
 
       if (ref.current) {
         ref.current.style.transition = "transform 0.3s";
@@ -288,6 +288,6 @@ export default SlideScreen;
 
 declare global {
   interface Window {
-    currentScreen: HTMLDivElement | null;
+    scrollContainer: HTMLDivElement | null;
   }
 }
