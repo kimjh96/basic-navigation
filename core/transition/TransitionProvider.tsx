@@ -50,7 +50,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
           type: NavigationActionType.DONE
         });
         dispatch({ type: HistoryActionType.STACK_PUSH, path: event.path, params: event.params });
-      } else if (event.status === NavigationStatus.POP) {
+      } else if (event.status === NavigationStatus.BACK) {
         setTransitionBuffer((prevState) => {
           const buffer = prevState.find((item) => item.id === `${event.path}-${event.status}`);
 
@@ -80,7 +80,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
                 navigationDispatch({
                   type: NavigationActionType.DONE
                 });
-                dispatch({ type: HistoryActionType.POP });
+                dispatch({ type: HistoryActionType.BACK });
                 resolve(true);
               }, 300);
             });

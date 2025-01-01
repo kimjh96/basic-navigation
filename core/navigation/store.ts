@@ -25,11 +25,11 @@ export function navigationReducer(state: Navigation, action: NavigationAction): 
           params: action.params
         })
       };
-    case NavigationActionType.POP:
+    case NavigationActionType.BACK:
       return {
-        status: NavigationStatus.POP,
+        status: NavigationStatus.BACK,
         events: state.events.concat({
-          status: NavigationStatus.POP,
+          status: NavigationStatus.BACK,
           path: action.path,
           params: action.params
         })

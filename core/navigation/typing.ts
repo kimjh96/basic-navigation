@@ -8,14 +8,14 @@ export const enum NavigationStatus {
   PUSH = "PUSH",
   STACK_PUSH = "STACK_PUSH",
   REPLACE = "REPLACE",
-  POP = "POP",
+  BACK = "BACK",
   DONE = "DONE"
 }
 
 export const enum NavigationActionType {
   PUSH = "PUSH_NAVIGATION",
   STACK_PUSH = "STACK_PUSH_NAVIGATION",
-  POP = "POP_NAVIGATION",
+  BACK = "BACK_NAVIGATION",
   READY = "READY_NAVIGATION",
   DONE = "DONE_NAVIGATION"
 }
@@ -32,7 +32,7 @@ export type NavigationAction =
       params: Record<string, string>;
     }
   | {
-      type: NavigationActionType.POP;
+      type: NavigationActionType.BACK;
       path: string;
       params: Record<string, string>;
     }

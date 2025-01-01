@@ -60,7 +60,7 @@ function HistoryProvider({
 
         if (isBack) {
           navigationDispatch({
-            type: NavigationActionType.POP,
+            type: NavigationActionType.BACK,
             path,
             params
           });

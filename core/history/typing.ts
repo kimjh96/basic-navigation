@@ -6,10 +6,10 @@ export interface History {
 export const enum HistoryActionType {
   PUSH = "PUSH",
   STACK_PUSH = "STACK_PUSH",
-  POP = "POP"
+  BACK = "BACK"
 }
 
 export type HistoryAction =
   | { type: HistoryActionType.PUSH; path: string; params: Record<string, string> }
   | { type: HistoryActionType.STACK_PUSH; path: string; params: Record<string, string> }
-  | { type: HistoryActionType.POP };
+  | { type: HistoryActionType.BACK };
