@@ -1,6 +1,11 @@
 export interface Navigation {
   status: NavigationStatus;
-  events: { status: NavigationStatus; path: string; params: Record<string, string> }[];
+  events: {
+    status: NavigationStatus;
+    path: string;
+    params: Record<string, string>;
+    recordedAt: number;
+  }[];
 }
 
 export const enum NavigationStatus {
@@ -9,18 +14,30 @@ export const enum NavigationStatus {
   STACK_PUSH = "STACK_PUSH",
   REPLACE = "REPLACE",
   BACK = "BACK",
-  NAVIGATING = "NAVIGATING",
-  DONE = "DONE"
+  PUSH_NAVIGATING = "PUSH_NAVIGATING",
+  STACK_PUSH_NAVIGATING = "STACK_PUSH_NAVIGATING",
+  REPLACE_NAVIGATING = "REPLACE_NAVIGATING",
+  BACK_NAVIGATING = "BACK_NAVIGATING",
+  PUSH_DONE = "PUSH_DONE",
+  STACK_PUSH_DONE = "STACK_PUSH_DONE",
+  REPLACE_DONE = "REPLACE_DONE",
+  BACK_DONE = "BACK_DONE"
 }
 
 export const enum NavigationActionType {
-  PUSH = "PUSH_NAVIGATION",
-  STACK_PUSH = "STACK_PUSH_NAVIGATION",
+  PUSH = "PUSH",
+  STACK_PUSH = "STACK_PUSH",
   REPLACE = "REPLACE",
   BACK = "BACK_NAVIGATION",
   READY = "READY_NAVIGATION",
-  NAVIGATING = "NAVIGATING_NAVIGATION",
-  DONE = "DONE_NAVIGATION"
+  PUSH_NAVIGATING = "PUSH_NAVIGATING",
+  STACK_PUSH_NAVIGATING = "STACK_PUSH_NAVIGATING",
+  REPLACE_NAVIGATING = "REPLACE_NAVIGATING",
+  BACK_NAVIGATING = "BACK_NAVIGATING",
+  PUSH_DONE = "PUSH_DONE",
+  STACK_PUSH_DONE = "STACK_PUSH_DONE",
+  REPLACE_DONE = "REPLACE_DONE",
+  BACK_DONE = "BACK_DONE"
 }
 
 export type NavigationAction =
@@ -45,5 +62,11 @@ export type NavigationAction =
       params: Record<string, string>;
     }
   | { type: NavigationActionType.READY }
-  | { type: NavigationActionType.NAVIGATING }
-  | { type: NavigationActionType.DONE };
+  | { type: NavigationActionType.PUSH_NAVIGATING }
+  | { type: NavigationActionType.STACK_PUSH_NAVIGATING }
+  | { type: NavigationActionType.REPLACE_NAVIGATING }
+  | { type: NavigationActionType.BACK_NAVIGATING }
+  | { type: NavigationActionType.PUSH_DONE }
+  | { type: NavigationActionType.STACK_PUSH_DONE }
+  | { type: NavigationActionType.REPLACE_DONE }
+  | { type: NavigationActionType.BACK_DONE };

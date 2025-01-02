@@ -25,24 +25,27 @@ function TransitionProvider({ children }: PropsWithChildren) {
     }>
   >([]);
 
-  const transitionTimerRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+  const transitionTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const isFlushingRef = useRef(false);
 
   useEffect(() => {
     for (const event of events) {
+      const id = Object.keys(event)
+        .map((key) => event[key as keyof typeof event])
+        .join("-");
+
       if (event.status === NavigationStatus.PUSH) {
+        navigationDispatch({
+          type: NavigationActionType.PUSH_NAVIGATING
+        });
         activityDispatch({
           type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
           path: event.path,
           params: event.params
         });
-        navigationDispatch({
-          type: NavigationActionType.NAVIGATING
-        });
         dispatch({ type: HistoryActionType.PUSH, path: event.path, params: event.params });
 
         setTransitionBuffer((prevState) => {
-          const id = `${event.path}-${event.status}`;
           const transition = prevState.find((item) => item.id === id);
 
           if (transition) {
@@ -51,9 +54,9 @@ function TransitionProvider({ children }: PropsWithChildren) {
 
           const flush = () =>
             new Promise<boolean>((resolve) => {
-              transitionTimerRef.current[id] = setTimeout(() => {
+              transitionTimerRef.current = setTimeout(() => {
                 navigationDispatch({
-                  type: NavigationActionType.DONE
+                  type: NavigationActionType.PUSH_DONE
                 });
                 resolve(true);
               }, 300);
@@ -65,29 +68,29 @@ function TransitionProvider({ children }: PropsWithChildren) {
           });
         });
       } else if (event.status === NavigationStatus.STACK_PUSH) {
-        activityDispatch({
-          type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
-          path: event.path,
-          params: event.params
-        });
         navigationDispatch({
-          type: NavigationActionType.NAVIGATING
+          type: NavigationActionType.STACK_PUSH_NAVIGATING
         });
         dispatch({ type: HistoryActionType.STACK_PUSH, path: event.path, params: event.params });
 
         setTransitionBuffer((prevState) => {
-          const id = `${event.path}-${event.status}`;
           const transition = prevState.find((item) => item.id === id);
 
           if (transition) {
             return prevState.filter((prevTransition) => prevTransition.id !== transition.id);
           }
 
+          activityDispatch({
+            type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
+            path: event.path,
+            params: event.params
+          });
+
           const flush = () =>
             new Promise<boolean>((resolve) => {
-              transitionTimerRef.current[id] = setTimeout(() => {
+              transitionTimerRef.current = setTimeout(() => {
                 navigationDispatch({
-                  type: NavigationActionType.DONE
+                  type: NavigationActionType.STACK_PUSH_DONE
                 });
                 resolve(true);
               }, 300);
@@ -99,27 +102,27 @@ function TransitionProvider({ children }: PropsWithChildren) {
           });
         });
       } else if (event.status === NavigationStatus.REPLACE) {
-        activityDispatch({
-          type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
-          path: event.path,
-          params: event.params
-        });
         navigationDispatch({
-          type: NavigationActionType.NAVIGATING
+          type: NavigationActionType.REPLACE_NAVIGATING
         });
         dispatch({ type: HistoryActionType.PUSH, path: event.path, params: event.params });
 
         setTransitionBuffer((prevState) => {
-          const id = `${event.path}-${event.status}`;
           const transition = prevState.find((item) => item.id === id);
 
           if (transition) {
             return prevState.filter((prevTransition) => prevTransition.id !== transition.id);
           }
 
+          activityDispatch({
+            type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
+            path: event.path,
+            params: event.params
+          });
+
           const flush = (records: History["records"]) =>
             new Promise<boolean>((resolve) => {
-              transitionTimerRef.current[id] = setTimeout(() => {
+              transitionTimerRef.current = setTimeout(() => {
                 const { path, params } =
                   records[records.length - 3] ||
                   records[records.length - 2] ||
@@ -131,7 +134,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
                   params
                 });
                 navigationDispatch({
-                  type: NavigationActionType.DONE
+                  type: NavigationActionType.REPLACE_DONE
                 });
                 dispatch({
                   type: HistoryActionType.REPLACE,
@@ -148,8 +151,11 @@ function TransitionProvider({ children }: PropsWithChildren) {
           });
         });
       } else if (event.status === NavigationStatus.BACK) {
+        navigationDispatch({
+          type: NavigationActionType.BACK_NAVIGATING
+        });
+
         setTransitionBuffer((prevState) => {
-          const id = `${event.path}-${event.status}`;
           const transition = prevState.find((item) => item.id === id);
 
           if (transition) {
@@ -158,10 +164,6 @@ function TransitionProvider({ children }: PropsWithChildren) {
 
           const flush = (records: History["records"]) =>
             new Promise<boolean>((resolve) => {
-              navigationDispatch({
-                type: NavigationActionType.NAVIGATING
-              });
-
               const lastRecord = records[records.length - 1];
 
               if (lastRecord.type !== HistoryActionType.STACK_PUSH) {
@@ -170,7 +172,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
                 });
               }
 
-              transitionTimerRef.current[id] = setTimeout(() => {
+              transitionTimerRef.current = setTimeout(() => {
                 const { path, params } =
                   records[records.length - 3] || records[records.length - 2] || lastRecord;
 
@@ -180,7 +182,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
                   params
                 });
                 navigationDispatch({
-                  type: NavigationActionType.DONE
+                  type: NavigationActionType.BACK_DONE
                 });
                 dispatch({ type: HistoryActionType.BACK });
                 resolve(true);
@@ -214,13 +216,9 @@ function TransitionProvider({ children }: PropsWithChildren) {
   }, [transitionBuffer, records]);
 
   useEffect(() => {
-    const transitionTimer = transitionTimerRef.current;
-
     return () => {
-      for (const transitionId in transitionTimer) {
-        if (transitionTimer[transitionId]) {
-          clearTimeout(transitionTimer[transitionId]);
-        }
+      if (transitionTimerRef.current) {
+        clearTimeout(transitionTimerRef.current);
       }
     };
   }, []);

@@ -13,7 +13,8 @@ export function navigationReducer(state: Navigation, action: NavigationAction): 
         events: state.events.concat({
           status: NavigationStatus.PUSH,
           path: action.path,
-          params: action.params
+          params: action.params,
+          recordedAt: Date.now()
         })
       };
     case NavigationActionType.STACK_PUSH:
@@ -22,7 +23,8 @@ export function navigationReducer(state: Navigation, action: NavigationAction): 
         events: state.events.concat({
           status: NavigationStatus.STACK_PUSH,
           path: action.path,
-          params: action.params
+          params: action.params,
+          recordedAt: Date.now()
         })
       };
     case NavigationActionType.REPLACE:
@@ -31,7 +33,8 @@ export function navigationReducer(state: Navigation, action: NavigationAction): 
         events: state.events.concat({
           status: NavigationStatus.REPLACE,
           path: action.path,
-          params: action.params
+          params: action.params,
+          recordedAt: Date.now()
         })
       };
     case NavigationActionType.BACK:
@@ -40,7 +43,8 @@ export function navigationReducer(state: Navigation, action: NavigationAction): 
         events: state.events.concat({
           status: NavigationStatus.BACK,
           path: action.path,
-          params: action.params
+          params: action.params,
+          recordedAt: Date.now()
         })
       };
     case NavigationActionType.READY:
@@ -48,15 +52,45 @@ export function navigationReducer(state: Navigation, action: NavigationAction): 
         status: NavigationStatus.READY,
         events: state.events
       };
-    case NavigationActionType.NAVIGATING:
+    case NavigationActionType.PUSH_NAVIGATING:
       return {
-        status: NavigationStatus.NAVIGATING,
+        status: NavigationStatus.PUSH_NAVIGATING,
         events: state.events.slice(0, state.events.length - 1)
       };
-    case NavigationActionType.DONE:
+    case NavigationActionType.STACK_PUSH_NAVIGATING:
       return {
-        status: NavigationStatus.DONE,
+        status: NavigationStatus.STACK_PUSH_NAVIGATING,
+        events: state.events.slice(0, state.events.length - 1)
+      };
+    case NavigationActionType.REPLACE_NAVIGATING:
+      return {
+        status: NavigationStatus.REPLACE_NAVIGATING,
+        events: state.events.slice(0, state.events.length - 1)
+      };
+    case NavigationActionType.BACK_NAVIGATING:
+      return {
+        status: NavigationStatus.BACK_NAVIGATING,
         events: state.events
+      };
+    case NavigationActionType.PUSH_DONE:
+      return {
+        status: NavigationStatus.PUSH_DONE,
+        events: state.events
+      };
+    case NavigationActionType.STACK_PUSH_DONE:
+      return {
+        status: NavigationStatus.STACK_PUSH_DONE,
+        events: state.events
+      };
+    case NavigationActionType.REPLACE_DONE:
+      return {
+        status: NavigationStatus.REPLACE_DONE,
+        events: state.events
+      };
+    case NavigationActionType.BACK_DONE:
+      return {
+        status: NavigationStatus.BACK_DONE,
+        events: state.events.slice(0, state.events.length - 1)
       };
     default:
       return state;
