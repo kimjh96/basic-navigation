@@ -34,6 +34,8 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
   const backdropRef = useRef<HTMLDivElement>(null);
 
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    if (!currentActivity?.animate) return;
+
     currentClientXRef.current = 0;
     startClientXRef.current = e.touches[0].clientX;
     startClientYRef.current = e.touches[0].clientY;
@@ -53,6 +55,8 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
   };
 
   const handleTouchEnd = (e: TouchEvent<HTMLDivElement>) => {
+    if (!currentActivity?.animate) return;
+
     const isTriggered = currentClientXRef.current >= 30;
     const previousActivityElement = e.currentTarget.parentElement?.previousElementSibling;
 
@@ -177,26 +181,29 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
       window.scrollContainer = ref.current;
 
       if (ref.current) {
-        ref.current.style.transition = "transform 0.3s";
+        ref.current.style.transition = currentActivity?.animate ? "transform 0.3s" : "none";
       }
 
-      mountDelayTimer = setTimeout(() => {
-        const previousActivityElement = stackRouteElement?.previousElementSibling;
+      mountDelayTimer = setTimeout(
+        () => {
+          const previousActivityElement = stackRouteElement?.previousElementSibling;
 
-        if (previousActivityElement) {
-          previousActivityElement.lastElementChild!.scrollTop =
-            window.history.state?.scrollTop || 0;
+          if (previousActivityElement) {
+            previousActivityElement.lastElementChild!.scrollTop =
+              window.history.state?.scrollTop || 0;
 
-          const style = previousActivityElement.getAttribute("style");
-          const styleObject = styleStringToObject(style || "");
-          styleObject.transition = "transform 0.3s";
-          styleObject.transform = `translate3d(-100px, 0, 0)`;
+            const style = previousActivityElement.getAttribute("style");
+            const styleObject = styleStringToObject(style || "");
+            styleObject.transition = currentActivity?.animate ? "transform 0.3s" : "none";
+            styleObject.transform = `translate3d(-100px, 0, 0)`;
 
-          previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
-        }
+            previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
+          }
 
-        setTranslateX(0);
-      }, 50);
+          setTranslateX(0);
+        },
+        currentActivity?.animate ? 50 : 0
+      );
     }
 
     return () => {
@@ -204,7 +211,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
         clearTimeout(mountDelayTimer);
       }
     };
-  }, [currentActivity?.activePath]);
+  }, [currentActivity?.activePath, currentActivity?.animate]);
 
   useEffect(() => {
     const stackRouteElement = ref.current?.parentElement;
@@ -225,7 +232,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
       if (previousActivityElement) {
         const style = previousActivityElement.getAttribute("style");
         const styleObject = styleStringToObject(style || "");
-        styleObject.transition = "transform 0.3s";
+        styleObject.transition = waitingActivity?.animate ? "transform 0.3s" : "none";
         styleObject.transform = `translate3d(0, 0, 0)`;
 
         previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
@@ -233,7 +240,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
 
       setTranslateX("100%");
     }
-  }, [waitingActivity?.activePath, translateX]);
+  }, [waitingActivity?.activePath, waitingActivity?.animate, translateX]);
 
   return (
     <>
@@ -258,7 +265,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
           height: "100%",
           backgroundColor: "rgba(0, 0, 0, 0.3)",
           transition: "opacity 0.3s",
-          opacity: !translateX ? 1 : 0,
+          opacity: currentActivity?.animate && !translateX ? 1 : 0,
           pointerEvents: "none",
           zIndex: 0
         }}

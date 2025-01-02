@@ -49,6 +49,7 @@ function HistoryProvider({
     const handlePopState = (e: PopStateEvent) => {
       const nextIndex = e.state?.index;
       const status = e.state?.status;
+      const animate = e.state?.animate;
       const { pathname, search } = window.location;
       const path = `${pathname}${search}`;
       const params = getParams(paths, pathname, search);
@@ -63,25 +64,29 @@ function HistoryProvider({
           navigationDispatch({
             type: NavigationActionType.BACK,
             path,
-            params
+            params,
+            animate
           });
         } else if (isPush) {
           navigationDispatch({
             type: NavigationActionType.PUSH,
             path,
-            params
+            params,
+            animate
           });
         } else if (isStackPush) {
           navigationDispatch({
             type: NavigationActionType.STACK_PUSH,
             path,
-            params
+            params,
+            animate
           });
         } else if (isReplace) {
           navigationDispatch({
             type: NavigationActionType.PUSH,
             path,
-            params
+            params,
+            animate
           });
         }
       }

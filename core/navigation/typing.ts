@@ -5,6 +5,7 @@ export interface Navigation {
     path: string;
     params: Record<string, string>;
     recordedAt: number;
+    animate?: boolean;
   }[];
 }
 
@@ -45,21 +46,25 @@ export type NavigationAction =
       type: NavigationActionType.PUSH;
       path: string;
       params: Record<string, string>;
+      animate?: boolean;
     }
   | {
       type: NavigationActionType.STACK_PUSH;
       path: string;
       params: Record<string, string>;
+      animate?: boolean;
     }
   | {
       type: NavigationActionType.REPLACE;
       path: string;
       params: Record<string, string>;
+      animate?: boolean;
     }
   | {
       type: NavigationActionType.BACK;
       path: string;
       params: Record<string, string>;
+      animate?: boolean;
     }
   | { type: NavigationActionType.READY }
   | { type: NavigationActionType.PUSH_NAVIGATING }

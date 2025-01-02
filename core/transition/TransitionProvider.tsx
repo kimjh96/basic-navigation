@@ -39,9 +39,15 @@ function TransitionProvider({ children }: PropsWithChildren) {
         activityDispatch({
           type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
           path: event.path,
-          params: event.params
+          params: event.params,
+          animate: event.animate
         });
-        dispatch({ type: HistoryActionType.PUSH, path: event.path, params: event.params });
+        dispatch({
+          type: HistoryActionType.PUSH,
+          path: event.path,
+          params: event.params,
+          animate: event.animate
+        });
 
         setTransitionBuffer((prevState) => {
           const transition = prevState.find((item) => item.id === id);
@@ -72,9 +78,15 @@ function TransitionProvider({ children }: PropsWithChildren) {
         activityDispatch({
           type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
           path: event.path,
-          params: event.params
+          params: event.params,
+          animate: event.animate
         });
-        dispatch({ type: HistoryActionType.STACK_PUSH, path: event.path, params: event.params });
+        dispatch({
+          type: HistoryActionType.STACK_PUSH,
+          path: event.path,
+          params: event.params,
+          animate: event.animate
+        });
 
         setTransitionBuffer((prevState) => {
           const transition = prevState.find((item) => item.id === id);
@@ -105,9 +117,15 @@ function TransitionProvider({ children }: PropsWithChildren) {
         activityDispatch({
           type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
           path: event.path,
-          params: event.params
+          params: event.params,
+          animate: event.animate
         });
-        dispatch({ type: HistoryActionType.PUSH, path: event.path, params: event.params });
+        dispatch({
+          type: HistoryActionType.PUSH,
+          path: event.path,
+          params: event.params,
+          animate: event.animate
+        });
 
         setTransitionBuffer((prevState) => {
           const transition = prevState.find((item) => item.id === id);
@@ -135,7 +153,8 @@ function TransitionProvider({ children }: PropsWithChildren) {
                 dispatch({
                   type: HistoryActionType.REPLACE,
                   path: event.path,
-                  params: event.params
+                  params: event.params,
+                  animate: event.animate
                 });
                 resolve(true);
               }, 300);
@@ -169,13 +188,14 @@ function TransitionProvider({ children }: PropsWithChildren) {
               }
 
               transitionTimerRef.current = setTimeout(() => {
-                const { path, params } =
+                const { path, params, animate } =
                   records[records.length - 3] || records[records.length - 2] || lastRecord;
 
                 activityDispatch({
                   type: ActivityActionType.UPDATE_PREVIOUS_ACTIVITY,
                   path,
-                  params
+                  params,
+                  animate
                 });
                 navigationDispatch({
                   type: NavigationActionType.BACK_DONE

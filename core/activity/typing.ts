@@ -15,6 +15,7 @@ export interface Activity {
   path: BaseActivityPath[BaseActivity["name"]];
   params: BaseActivityParams[BaseActivity["name"]];
   activePath: string;
+  animate?: boolean;
 }
 
 export const enum ActivityActionType {
@@ -37,16 +38,19 @@ export type ActivityAction =
       path: string;
       params: Record<string, string>;
       activity?: Activity;
+      animate?: boolean;
     }
   | {
       type: ActivityActionType.UPDATE_PREVIOUS_ACTIVITY;
       path: string;
       params: Record<string, string>;
+      animate?: boolean;
     }
   | {
       type: ActivityActionType.UPDATE_SPECIFY_PREVIOUS_ACTIVITY;
       path: string;
       params: Record<string, string>;
+      animate?: boolean;
     }
   | {
       type: ActivityActionType.UPDATE_WAITING_ACTIVITY;

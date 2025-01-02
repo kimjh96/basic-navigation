@@ -8,6 +8,10 @@ import HistoryContext from "@core/history/HistoryContext";
 import NavigationContext from "@core/navigation/NavigationContext";
 import { NavigationActionType, NavigationStatus } from "@core/navigation/typing";
 
+interface Options {
+  animate?: boolean;
+}
+
 export default function useNavigation() {
   const { state } = useContext(ActivityContext);
   const {
@@ -16,7 +20,11 @@ export default function useNavigation() {
   const { dispatch: navigationDispatch } = useContext(NavigationContext);
 
   return {
-    push: <T extends BaseActivity["name"]>(name: T, params: BaseActivityParams[T] = {}) => {
+    push: <T extends BaseActivity["name"]>(
+      name: T,
+      params: BaseActivityParams[T] = {},
+      { animate }: Options = { animate: true }
+    ) => {
       const nextActivity = state.activities.find((activity) => activity.name === name);
 
       if (!nextActivity) return;
@@ -43,7 +51,8 @@ export default function useNavigation() {
         {
           index: index + 1,
           status: NavigationStatus.PUSH,
-          scrollTop: window.scrollContainer?.scrollTop || 0
+          scrollTop: window.scrollContainer?.scrollTop || 0,
+          animate
         },
         "",
         nextPath
@@ -51,12 +60,14 @@ export default function useNavigation() {
       navigationDispatch({
         type: NavigationActionType.PUSH,
         path: nextPath,
-        params: nextParams
+        params: nextParams,
+        animate
       });
     },
     stackPush: <T extends BaseActivity["name"]>(
       _: T,
-      params: Partial<BaseActivityParams[T]> = {}
+      params: Partial<BaseActivityParams[T]> = {},
+      { animate }: Options = { animate: true }
     ) => {
       const currentActivity = state.currentActivity;
 
@@ -87,7 +98,8 @@ export default function useNavigation() {
         {
           index: index + 1,
           status: NavigationStatus.STACK_PUSH,
-          scrollTop: window.scrollContainer?.scrollTop || 0
+          scrollTop: window.scrollContainer?.scrollTop || 0,
+          animate
         },
         "",
         nextPath
@@ -95,10 +107,15 @@ export default function useNavigation() {
       navigationDispatch({
         type: NavigationActionType.STACK_PUSH,
         path: nextPath,
-        params: nextParams as Record<string, string>
+        params: nextParams as Record<string, string>,
+        animate
       });
     },
-    replace: <T extends BaseActivity["name"]>(name: T, params: BaseActivityParams[T] = {}) => {
+    replace: <T extends BaseActivity["name"]>(
+      name: T,
+      params: BaseActivityParams[T] = {},
+      { animate }: Options = { animate: true }
+    ) => {
       const nextActivity = state.activities.find((activity) => activity.name === name);
 
       if (!nextActivity) return;
@@ -125,7 +142,8 @@ export default function useNavigation() {
         {
           index,
           status: NavigationStatus.REPLACE,
-          scrollTop: window.scrollContainer?.scrollTop || 0
+          scrollTop: window.scrollContainer?.scrollTop || 0,
+          animate
         },
         "",
         nextPath
@@ -133,7 +151,8 @@ export default function useNavigation() {
       navigationDispatch({
         type: NavigationActionType.REPLACE,
         path: nextPath,
-        params: nextParams
+        params: nextParams,
+        animate
       });
     },
     back: () => window.history.back()

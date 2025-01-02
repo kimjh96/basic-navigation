@@ -14,7 +14,8 @@ export function activityReducer(state: ActivityState, action: ActivityAction): A
         .map((activity) => ({
           ...activity,
           params: action.params,
-          activePath: action.path
+          activePath: action.path,
+          animate: action.animate
         }));
 
       return {
@@ -33,7 +34,8 @@ export function activityReducer(state: ActivityState, action: ActivityAction): A
         .map((activity) => ({
           ...activity,
           params: action.params,
-          activePath: action.path
+          activePath: action.path,
+          animate: action.animate
         }));
 
       return {
@@ -52,7 +54,8 @@ export function activityReducer(state: ActivityState, action: ActivityAction): A
         .map((activity) => ({
           ...activity,
           params: action.params,
-          activePath: action.path
+          activePath: action.path,
+          animate: action.animate
         }));
 
       return {
