@@ -126,8 +126,6 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
         const style = previousActivityElement?.getAttribute("style");
         const styleObject = styleStringToObject(style || "");
 
-        styleObject.transform = `translate3d(-100px, 0, 0)`;
-
         previousActivityElement?.setAttribute("style", styleObjectToString(styleObject));
         currentActivityElement.style.transition = "transform 0.3s";
         currentActivityElement.style.transform = "translate3d(0, 0, 0)";
