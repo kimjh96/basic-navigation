@@ -30,9 +30,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     for (const event of events) {
-      const id = Object.keys(event)
-        .map((key) => event[key as keyof typeof event])
-        .join("-");
+      const id = `${event.path}-${event.status}-${event.recordedAt}`;
 
       if (event.status === NavigationStatus.PUSH) {
         navigationDispatch({
@@ -71,6 +69,11 @@ function TransitionProvider({ children }: PropsWithChildren) {
         navigationDispatch({
           type: NavigationActionType.STACK_PUSH_NAVIGATING
         });
+        activityDispatch({
+          type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
+          path: event.path,
+          params: event.params
+        });
         dispatch({ type: HistoryActionType.STACK_PUSH, path: event.path, params: event.params });
 
         setTransitionBuffer((prevState) => {
@@ -79,12 +82,6 @@ function TransitionProvider({ children }: PropsWithChildren) {
           if (transition) {
             return prevState.filter((prevTransition) => prevTransition.id !== transition.id);
           }
-
-          activityDispatch({
-            type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
-            path: event.path,
-            params: event.params
-          });
 
           const flush = () =>
             new Promise<boolean>((resolve) => {
@@ -105,6 +102,11 @@ function TransitionProvider({ children }: PropsWithChildren) {
         navigationDispatch({
           type: NavigationActionType.REPLACE_NAVIGATING
         });
+        activityDispatch({
+          type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
+          path: event.path,
+          params: event.params
+        });
         dispatch({ type: HistoryActionType.PUSH, path: event.path, params: event.params });
 
         setTransitionBuffer((prevState) => {
@@ -113,12 +115,6 @@ function TransitionProvider({ children }: PropsWithChildren) {
           if (transition) {
             return prevState.filter((prevTransition) => prevTransition.id !== transition.id);
           }
-
-          activityDispatch({
-            type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
-            path: event.path,
-            params: event.params
-          });
 
           const flush = (records: History["records"]) =>
             new Promise<boolean>((resolve) => {

@@ -21,7 +21,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
   } = useContext(NavigationContext);
 
   const [translateX, setTranslateX] = useState<string | number>(
-    status === NavigationStatus.READY ? 0 : "100%"
+    [NavigationStatus.READY, NavigationStatus.REPLACE_DONE].includes(status) ? 0 : "100%"
   );
 
   const ref = useRef<HTMLDivElement>(null);
