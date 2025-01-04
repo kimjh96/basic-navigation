@@ -1,7 +1,7 @@
 {
   "name": "basic-navigation",
-  "main": "./dist/index.js",
-  "module": "./dist/index.es.js",
+  "main": "./dist/basic-navigation.mjs",
+  "module": "./dist/basic-navigation.mjs",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"

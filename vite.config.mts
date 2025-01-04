@@ -11,9 +11,9 @@ export default defineConfig(() => {
     build: {
       lib: {
         entry: "core/index.ts",
-        name: "basic-navigation",
-        formats: ["es", "cjs"],
-        fileName: (format) => (format === "es" ? `index.es.js` : `index.js`)
+        name: "index",
+        formats: ["es"],
+        fileName: (format) => `[name].${format}.js`
       },
       rollupOptions: {
         external: [...Object.keys(pkg.peerDependencies), /jsx-runtime/g]
