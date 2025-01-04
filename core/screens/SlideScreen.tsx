@@ -1,4 +1,12 @@
-import { PropsWithChildren, TouchEvent, useContext, useEffect, useRef, useState } from "react";
+import {
+  MouseEvent,
+  PropsWithChildren,
+  TouchEvent,
+  useContext,
+  useEffect,
+  useRef,
+  useState
+} from "react";
 
 import styleObjectToString from "@utils/styleObjectToString";
 import styleStringToObject from "@utils/styleStringToObject";
@@ -32,17 +40,27 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
   const startScrollTopRef = useRef(0);
   const currentClientXRef = useRef(0);
   const backdropRef = useRef<HTMLDivElement>(null);
+  const isSlidingEndRef = useRef(true);
+  const slidingEndTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+  const startSlide = ({
+    clientX,
+    clientY,
+    scrollTop,
+    previousActivityElement
+  }: {
+    clientX: number;
+    clientY: number;
+    scrollTop: number;
+    previousActivityElement?: Element;
+  }) => {
     if (!currentActivity?.animate) return;
 
     currentClientXRef.current = 0;
-    startClientXRef.current = e.touches[0].clientX;
-    startClientYRef.current = e.touches[0].clientY;
-    startScrollTopRef.current = e.currentTarget.scrollTop;
+    startClientXRef.current = clientX;
+    startClientYRef.current = clientY;
+    startScrollTopRef.current = scrollTop;
     isSlidingRef.current = true;
-
-    const previousActivityElement = e.currentTarget.parentElement?.previousElementSibling;
 
     if (previousActivityElement) {
       const style = previousActivityElement.getAttribute("style");
@@ -54,122 +72,25 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
     }
   };
 
-  const handleTouchEnd = (e: TouchEvent<HTMLDivElement>) => {
-    if (!currentActivity?.animate) return;
+  const handleMouseDown = (e: MouseEvent<HTMLDivElement>) =>
+    startSlide({
+      clientX: e.clientX,
+      clientY: e.clientY,
+      scrollTop: e.currentTarget.scrollTop,
+      previousActivityElement: e.currentTarget.parentElement?.previousElementSibling || undefined
+    });
 
-    const isTriggered = currentClientXRef.current >= 30;
-    const previousActivityElement = e.currentTarget.parentElement?.previousElementSibling;
-
-    e.currentTarget.style.transition = "transform 0.3s";
-    backdropRef.current!.style.transition = "opacity 0.3s";
-
-    if (isTriggered) {
-      if (previousActivityElement) {
-        const style = previousActivityElement.getAttribute("style");
-        const styleObject = styleStringToObject(style || "");
-        styleObject.transition = "transform 0.3s";
-        styleObject.transform = `translate3d(0, 0, 0)`;
-
-        previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
-      }
-
-      e.currentTarget.style.transform = "translate3d(100%, 0, 0)";
-      window.history.back();
-    } else {
-      if (previousActivityElement) {
-        const style = previousActivityElement.getAttribute("style");
-        const styleObject = styleStringToObject(style || "");
-        styleObject.transition = "transform 0.3s";
-        styleObject.transform = `translate3d(-100px, 0, 0)`;
-
-        previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
-      }
-
-      e.currentTarget.style.transform = "translate3d(0, 0, 0)";
-    }
-
-    isSlidingRef.current = false;
-  };
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) =>
+    startSlide({
+      clientX: e.touches[0].clientX,
+      clientY: e.touches[0].clientY,
+      scrollTop: e.currentTarget.scrollTop,
+      previousActivityElement: e.currentTarget.parentElement?.previousElementSibling || undefined
+    });
 
   const handleScrollEnd = useDebounceCallback(() => {
     isScrollingRef.current = false;
   }, 300);
-
-  useEffect(() => {
-    const currentActivityElement = ref.current;
-
-    const handleScroll = () => {
-      isScrollingRef.current = true;
-    };
-
-    currentActivityElement?.addEventListener("scroll", handleScroll);
-    currentActivityElement?.addEventListener("scroll", handleScrollEnd);
-
-    return () => {
-      currentActivityElement?.removeEventListener("scroll", handleScroll);
-      currentActivityElement?.removeEventListener("scroll", handleScrollEnd);
-    };
-  }, [handleScrollEnd]);
-
-  useEffect(() => {
-    const currentActivityElement = ref.current;
-
-    const handleTouchMove = (e: globalThis.TouchEvent) => {
-      if (!isSlidingRef.current || isScrollingRef.current) return;
-
-      const currentActivityElement = e.currentTarget as HTMLElement;
-      const previousActivityElement = currentActivityElement.parentElement?.previousElementSibling;
-
-      currentClientXRef.current = e.touches[0].clientX - startClientXRef.current;
-
-      const deltaY = Math.abs(e.touches[0].clientY - startClientYRef.current);
-      const deltaX = Math.abs(currentClientXRef.current);
-      const notYet = deltaY > deltaX || currentClientXRef.current < 0;
-
-      if (notYet) {
-        const style = previousActivityElement?.getAttribute("style");
-        const styleObject = styleStringToObject(style || "");
-
-        previousActivityElement?.setAttribute("style", styleObjectToString(styleObject));
-        currentActivityElement.style.transition = "transform 0.3s";
-        currentActivityElement.style.transform = "translate3d(0, 0, 0)";
-        currentClientXRef.current = 0;
-        isSlidingRef.current = false;
-        return;
-      }
-
-      if (previousActivityElement) {
-        const progress = deltaX / window.innerWidth;
-        const clampedProgress = Math.min(Math.max(progress, 0), 1);
-        const clampedProgressPercentage = Math.min(Math.max(progress, 0), 1) * 100;
-
-        backdropRef.current!.style.transition = "none";
-        backdropRef.current!.style.opacity = `${1 - clampedProgress}`;
-
-        const style = previousActivityElement.getAttribute("style");
-        const styleObject = styleStringToObject(style || "");
-        styleObject.transition = "none";
-        styleObject.transform = `translate3d(calc(-100px + ${clampedProgressPercentage}px), 0, 0)`;
-
-        previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
-      }
-
-      currentActivityElement.style.transition = "none";
-      currentActivityElement.style.transform = `translate3d(${currentClientXRef.current}px, 0, 0)`;
-
-      const targetElement = e.target as HTMLElement;
-
-      if (targetElement.id === "activity-bar" || e.cancelable) {
-        e.preventDefault();
-      }
-    };
-
-    currentActivityElement?.addEventListener("touchmove", handleTouchMove);
-
-    return () => {
-      currentActivityElement?.removeEventListener("touchmove", handleTouchMove);
-    };
-  }, []);
 
   useEffect(() => {
     let mountDelayTimer: ReturnType<typeof setTimeout>;
@@ -242,6 +163,195 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
     }
   }, [waitingActivity?.activePath, waitingActivity?.animate, translateX]);
 
+  useEffect(() => {
+    const currentActivityElement = ref.current;
+
+    const handleScroll = () => {
+      isScrollingRef.current = true;
+    };
+
+    currentActivityElement?.addEventListener("scroll", handleScroll);
+    currentActivityElement?.addEventListener("scroll", handleScrollEnd);
+
+    return () => {
+      currentActivityElement?.removeEventListener("scroll", handleScroll);
+      currentActivityElement?.removeEventListener("scroll", handleScrollEnd);
+    };
+  }, [handleScrollEnd]);
+
+  useEffect(() => {
+    const currentActivityElement = ref.current;
+
+    const sliding = ({
+      e,
+      clientX,
+      clientY,
+      currentActivityElement
+    }: {
+      e: globalThis.MouseEvent | globalThis.TouchEvent;
+      clientX: number;
+      clientY: number;
+      currentActivityElement: HTMLDivElement;
+    }) => {
+      if (!isSlidingRef.current || isScrollingRef.current) return;
+
+      const previousActivityElement = currentActivityElement.parentElement?.previousElementSibling;
+
+      currentClientXRef.current = clientX - startClientXRef.current;
+
+      const deltaY = Math.abs(clientY - startClientYRef.current);
+      const deltaX = Math.abs(currentClientXRef.current);
+      const notYet = deltaY > deltaX || currentClientXRef.current < 0;
+
+      if (notYet) {
+        const style = previousActivityElement?.getAttribute("style");
+        const styleObject = styleStringToObject(style || "");
+
+        previousActivityElement?.setAttribute("style", styleObjectToString(styleObject));
+        currentActivityElement.style.transition = "transform 0.3s";
+        currentActivityElement.style.transform = "translate3d(0, 0, 0)";
+        currentClientXRef.current = 1; // 클릭 이벤트 전파 방지
+
+        isSlidingRef.current = false;
+        return;
+      }
+
+      if (previousActivityElement) {
+        const progress = deltaX / window.innerWidth;
+        const clampedProgress = Math.min(Math.max(progress, 0), 1);
+        const clampedProgressPercentage = Math.min(Math.max(progress, 0), 1) * 100;
+
+        backdropRef.current!.style.transition = "none";
+        backdropRef.current!.style.opacity = `${1 - clampedProgress}`;
+
+        const style = previousActivityElement.getAttribute("style");
+        const styleObject = styleStringToObject(style || "");
+        styleObject.transition = "none";
+        styleObject.transform = `translate3d(calc(-100px + ${clampedProgressPercentage}px), 0, 0)`;
+
+        previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
+      }
+
+      currentActivityElement.style.transition = "none";
+      currentActivityElement.style.transform = `translate3d(${currentClientXRef.current}px, 0, 0)`;
+
+      const targetElement = e.target as HTMLElement;
+
+      if (targetElement.id === "activity-bar" || e.cancelable) {
+        e.preventDefault();
+      }
+    };
+
+    const handleMouseMove = (e: globalThis.MouseEvent) =>
+      sliding({
+        e,
+        clientX: e.clientX,
+        clientY: e.clientY,
+        currentActivityElement: e.currentTarget as HTMLDivElement
+      });
+
+    const handleTouchMove = (e: globalThis.TouchEvent) =>
+      sliding({
+        e,
+        clientX: e.touches[0].clientX,
+        clientY: e.touches[0].clientY,
+        currentActivityElement: e.currentTarget as HTMLDivElement
+      });
+
+    currentActivityElement?.addEventListener("mousemove", handleMouseMove);
+    currentActivityElement?.addEventListener("touchmove", handleTouchMove);
+
+    return () => {
+      currentActivityElement?.removeEventListener("mousemove", handleMouseMove);
+      currentActivityElement?.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, []);
+
+  useEffect(() => {
+    const currentActivityElement = ref.current;
+
+    const endSlide = ({ currentActivityElement }: { currentActivityElement: HTMLDivElement }) => {
+      if (!currentActivity?.animate) return;
+
+      isSlidingRef.current = false;
+      isSlidingEndRef.current = false;
+
+      const previousActivityElement = currentActivityElement.parentElement?.previousElementSibling;
+      const isTriggered = currentClientXRef.current >= 30;
+
+      currentActivityElement.style.transition = "transform 0.3s";
+      backdropRef.current!.style.transition = "opacity 0.3s";
+
+      if (isTriggered) {
+        if (previousActivityElement) {
+          const style = previousActivityElement.getAttribute("style");
+          const styleObject = styleStringToObject(style || "");
+          styleObject.transition = "transform 0.3s";
+          styleObject.transform = `translate3d(0, 0, 0)`;
+
+          previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
+        }
+
+        currentActivityElement.style.transform = "translate3d(100%, 0, 0)";
+
+        window.history.back();
+      } else {
+        if (previousActivityElement) {
+          const style = previousActivityElement.getAttribute("style");
+          const styleObject = styleStringToObject(style || "");
+          styleObject.transition = "transform 0.3s";
+          styleObject.transform = `translate3d(-100px, 0, 0)`;
+
+          previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
+        }
+
+        currentActivityElement.style.transform = "translate3d(0, 0, 0)";
+      }
+
+      if (slidingEndTimerRef.current) {
+        clearTimeout(slidingEndTimerRef.current);
+      }
+
+      slidingEndTimerRef.current = setTimeout(() => {
+        isSlidingEndRef.current = true;
+      }, 300);
+    };
+
+    const handleMouseUp = (e: globalThis.MouseEvent) =>
+      endSlide({
+        currentActivityElement: e.currentTarget as HTMLDivElement
+      });
+
+    const handleTouchEnd = (e: globalThis.TouchEvent) =>
+      endSlide({
+        currentActivityElement: e.currentTarget as HTMLDivElement
+      });
+
+    currentActivityElement?.addEventListener("mouseup", handleMouseUp);
+    currentActivityElement?.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      currentActivityElement?.removeEventListener("mouseup", handleMouseUp);
+      currentActivityElement?.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [currentActivity?.animate]);
+
+  useEffect(() => {
+    const currentActivityElement = ref.current;
+
+    const handleClick = (e: globalThis.MouseEvent) => {
+      if (!isSlidingEndRef.current && currentClientXRef.current >= 1) {
+        e.stopPropagation();
+      }
+    };
+
+    currentActivityElement?.addEventListener("click", handleClick);
+
+    return () => {
+      currentActivityElement?.removeEventListener("click", handleClick);
+    };
+  }, []);
+
   return (
     <>
       <div
@@ -272,8 +382,8 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
       />
       <div
         ref={ref}
+        onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
         style={{
           width: "100%",
           height: "100%",
