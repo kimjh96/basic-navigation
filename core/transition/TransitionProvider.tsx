@@ -62,6 +62,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
                 navigationDispatch({
                   type: NavigationActionType.PUSH_DONE
                 });
+
                 resolve(true);
               }, 300);
             });
@@ -101,6 +102,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
                 navigationDispatch({
                   type: NavigationActionType.STACK_PUSH_DONE
                 });
+
                 resolve(true);
               }, 300);
             });
@@ -156,6 +158,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
                   params: event.params,
                   animate: event.animate
                 });
+
                 resolve(true);
               }, 300);
             });
@@ -201,6 +204,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
                   type: NavigationActionType.BACK_DONE
                 });
                 dispatch({ type: HistoryActionType.BACK });
+
                 resolve(true);
               }, 300);
             });
@@ -221,9 +225,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
       for (const { flush } of transitionBuffer) {
         isFlushingRef.current = true;
 
-        const isFlushed = await flush(records);
-
-        if (isFlushed) {
+        if (await flush(records)) {
           setTransitionBuffer((prevState) => prevState.slice(0, prevState.length - 1));
           isFlushingRef.current = false;
         }
