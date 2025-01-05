@@ -1,12 +1,33 @@
 {
   "name": "basic-navigation",
-  "main": "./dist/basic-navigation.mjs",
-  "module": "./dist/basic-navigation.mjs",
+  "version": "0.0.0",
+  "main": "./dist/index.es.js",
+  "module": "./dist/index.es.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
   "sideEffects": false,
+  "keywords": [
+    "react",
+    "react-router",
+    "react-router-dom",
+    "navigation",
+    "react-navigation"
+  ],
+  "author": {
+    "name": "kimjh96",
+    "email": "kimjhs@kakao.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kimjh96/basic-navigation.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kimjh96/basic-navigation/issues",
+    "email": "kimjhs@kakao.com"
+  },
+  "license": "MIT",
   "scripts": {
     "build": "vite build",
     "watch": "vite build --watch",
