@@ -50,11 +50,11 @@ function TransitionProvider({ children }: PropsWithChildren) {
         });
 
         setTransitionBuffer((prevState) => {
-          const transition = prevState.find((item) => item.id === id);
-
-          if (transition) {
-            return prevState.filter((prevTransition) => prevTransition.id !== transition.id);
+          if (isFlushingRef.current) {
+            return prevState;
           }
+
+          isFlushingRef.current = true;
 
           const flush = () =>
             new Promise<boolean>((resolve) => {
@@ -90,11 +90,11 @@ function TransitionProvider({ children }: PropsWithChildren) {
         });
 
         setTransitionBuffer((prevState) => {
-          const transition = prevState.find((item) => item.id === id);
-
-          if (transition) {
-            return prevState.filter((prevTransition) => prevTransition.id !== transition.id);
+          if (isFlushingRef.current) {
+            return prevState;
           }
+
+          isFlushingRef.current = true;
 
           const flush = () =>
             new Promise<boolean>((resolve) => {
@@ -130,11 +130,11 @@ function TransitionProvider({ children }: PropsWithChildren) {
         });
 
         setTransitionBuffer((prevState) => {
-          const transition = prevState.find((item) => item.id === id);
-
-          if (transition) {
-            return prevState.filter((prevTransition) => prevTransition.id !== transition.id);
+          if (isFlushingRef.current) {
+            return prevState;
           }
+
+          isFlushingRef.current = true;
 
           const flush = (records: History["records"]) =>
             new Promise<boolean>((resolve) => {
@@ -174,11 +174,11 @@ function TransitionProvider({ children }: PropsWithChildren) {
         });
 
         setTransitionBuffer((prevState) => {
-          const transition = prevState.find((item) => item.id === id);
-
-          if (transition) {
-            return prevState.filter((prevTransition) => prevTransition.id !== transition.id);
+          if (isFlushingRef.current) {
+            return prevState;
           }
+
+          isFlushingRef.current = true;
 
           const flush = (records: History["records"]) =>
             new Promise<boolean>((resolve) => {
@@ -219,14 +219,12 @@ function TransitionProvider({ children }: PropsWithChildren) {
   }, [events, activityDispatch, navigationDispatch, dispatch]);
 
   useEffect(() => {
-    if (transitionBuffer.length === 0 || isFlushingRef.current) return;
+    if (transitionBuffer.length === 0) return;
 
     (async () => {
       for (const { flush } of transitionBuffer) {
-        isFlushingRef.current = true;
-
         if (await flush(records)) {
-          setTransitionBuffer((prevState) => prevState.slice(0, prevState.length - 1));
+          setTransitionBuffer((prevState) => prevState.slice(0, -1));
           isFlushingRef.current = false;
         }
       }
