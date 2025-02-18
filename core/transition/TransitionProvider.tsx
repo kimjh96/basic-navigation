@@ -36,14 +36,14 @@ function TransitionProvider({ children }: PropsWithChildren) {
         navigationDispatch({
           type: NavigationActionType.PUSH_NAVIGATING
         });
-        activityDispatch({
-          type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
+        dispatch({
+          type: HistoryActionType.PUSH,
           path: event.path,
           params: event.params,
           animate: event.animate
         });
-        dispatch({
-          type: HistoryActionType.PUSH,
+        activityDispatch({
+          type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
           path: event.path,
           params: event.params,
           animate: event.animate
@@ -76,14 +76,14 @@ function TransitionProvider({ children }: PropsWithChildren) {
         navigationDispatch({
           type: NavigationActionType.STACK_PUSH_NAVIGATING
         });
-        activityDispatch({
-          type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
+        dispatch({
+          type: HistoryActionType.STACK_PUSH,
           path: event.path,
           params: event.params,
           animate: event.animate
         });
-        dispatch({
-          type: HistoryActionType.STACK_PUSH,
+        activityDispatch({
+          type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
           path: event.path,
           params: event.params,
           animate: event.animate
@@ -116,14 +116,14 @@ function TransitionProvider({ children }: PropsWithChildren) {
         navigationDispatch({
           type: NavigationActionType.REPLACE_NAVIGATING
         });
-        activityDispatch({
-          type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
+        dispatch({
+          type: HistoryActionType.PUSH,
           path: event.path,
           params: event.params,
           animate: event.animate
         });
-        dispatch({
-          type: HistoryActionType.PUSH,
+        activityDispatch({
+          type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
           path: event.path,
           params: event.params,
           animate: event.animate

@@ -110,8 +110,10 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
           const previousActivityElement = stackRouteElement?.previousElementSibling;
 
           if (previousActivityElement) {
-            previousActivityElement.lastElementChild!.scrollTop =
-              window.history.state?.scrollTop || 0;
+            if (previousActivityElement.lastElementChild) {
+              previousActivityElement.lastElementChild.scrollTop =
+                window.history.state?.scrollTop || 0;
+            }
 
             const style = previousActivityElement.getAttribute("style");
             const styleObject = styleStringToObject(style || "");
