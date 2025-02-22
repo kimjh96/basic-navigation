@@ -36,7 +36,8 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "path-to-regexp": "^8.2.0"
+    "path-to-regexp": "^8.2.0",
+    "react-freeze": "^1.0.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.12.0",

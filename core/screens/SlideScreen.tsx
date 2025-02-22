@@ -14,6 +14,8 @@ import styleStringToObject from "@utils/styleStringToObject";
 import ActivityContext from "@core/activity/ActivityContext";
 import NavigationContext from "@core/navigation/NavigationContext";
 import { NavigationStatus } from "@core/navigation/typing";
+import TransitionContext from "@core/transition/TransitionContext";
+import { TransitionActionType } from "@core/transition/typing";
 import useDebounceCallback from "@hooks/useDebounceCallback";
 
 interface SlideScreenProps {
@@ -27,6 +29,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
   const {
     state: { status }
   } = useContext(NavigationContext);
+  const { dispatch } = useContext(TransitionContext);
 
   const [translateX, setTranslateX] = useState<string | number>(
     [NavigationStatus.READY, NavigationStatus.REPLACE_DONE].includes(status) ? 0 : "100%"
@@ -219,6 +222,10 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
       }
 
       if (previousActivityElement) {
+        dispatch({
+          type: TransitionActionType.PENDING
+        });
+
         const progress = deltaX / window.innerWidth;
         const clampedProgress = Math.min(Math.max(progress, 0), 1);
         const clampedProgressPercentage = Math.min(Math.max(progress, 0), 1) * 100;
@@ -228,6 +235,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
 
         const style = previousActivityElement.getAttribute("style");
         const styleObject = styleStringToObject(style || "");
+        styleObject.display = "block";
         styleObject.transition = "none";
         styleObject.transform = `translate3d(calc(-100px + ${clampedProgressPercentage}px), 0, 0)`;
 
@@ -267,7 +275,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
       currentActivityElement?.removeEventListener("mousemove", handleMouseMove);
       currentActivityElement?.removeEventListener("touchmove", handleTouchMove);
     };
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     const currentActivityElement = ref.current;
@@ -316,6 +324,18 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
 
       slidingEndTimerRef.current = setTimeout(() => {
         isSlidingEndRef.current = true;
+
+        if (!isTriggered && previousActivityElement) {
+          dispatch({
+            type: TransitionActionType.DONE
+          });
+
+          const style = previousActivityElement.getAttribute("style");
+          const styleObject = styleStringToObject(style || "");
+          styleObject.display = "none";
+
+          previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
+        }
       }, 300);
     };
 
@@ -336,7 +356,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
       currentActivityElement?.removeEventListener("mouseup", handleMouseUp);
       currentActivityElement?.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [currentActivity?.animate]);
+  }, [currentActivity?.animate, dispatch]);
 
   useEffect(() => {
     const currentActivityElement = ref.current;

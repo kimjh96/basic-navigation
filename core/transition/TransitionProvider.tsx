@@ -1,4 +1,4 @@
-import { PropsWithChildren, useContext, useEffect, useRef, useState } from "react";
+import { PropsWithChildren, useContext, useEffect, useReducer, useRef, useState } from "react";
 
 import ActivityContext from "@core/activity/ActivityContext";
 import { ActivityActionType } from "@core/activity/typing";
@@ -6,11 +6,17 @@ import HistoryContext from "@core/history/HistoryContext";
 import { History, HistoryActionType } from "@core/history/typing";
 import NavigationContext from "@core/navigation/NavigationContext";
 import { NavigationActionType, NavigationStatus } from "@core/navigation/typing";
+import { transitionReducer } from "@core/transition/store";
+import TransitionContext from "@core/transition/TransitionContext";
+import { TransitionStatus } from "@core/transition/typing";
 
 function TransitionProvider({ children }: PropsWithChildren) {
+  const [state, dispatch] = useReducer(transitionReducer, {
+    status: TransitionStatus.DONE
+  });
   const {
     state: { records },
-    dispatch
+    dispatch: historyDispatch
   } = useContext(HistoryContext);
   const { dispatch: activityDispatch } = useContext(ActivityContext);
   const {
@@ -36,7 +42,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
         navigationDispatch({
           type: NavigationActionType.PUSH_NAVIGATING
         });
-        dispatch({
+        historyDispatch({
           type: HistoryActionType.PUSH,
           path: event.path,
           params: event.params,
@@ -76,7 +82,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
         navigationDispatch({
           type: NavigationActionType.STACK_PUSH_NAVIGATING
         });
-        dispatch({
+        historyDispatch({
           type: HistoryActionType.STACK_PUSH,
           path: event.path,
           params: event.params,
@@ -116,7 +122,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
         navigationDispatch({
           type: NavigationActionType.REPLACE_NAVIGATING
         });
-        dispatch({
+        historyDispatch({
           type: HistoryActionType.PUSH,
           path: event.path,
           params: event.params,
@@ -152,7 +158,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
                 navigationDispatch({
                   type: NavigationActionType.REPLACE_DONE
                 });
-                dispatch({
+                historyDispatch({
                   type: HistoryActionType.REPLACE,
                   path: event.path,
                   params: event.params,
@@ -203,7 +209,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
                 navigationDispatch({
                   type: NavigationActionType.BACK_DONE
                 });
-                dispatch({ type: HistoryActionType.BACK });
+                historyDispatch({ type: HistoryActionType.BACK });
 
                 resolve(true);
               }, 300);
@@ -216,7 +222,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
         });
       }
     }
-  }, [events, activityDispatch, navigationDispatch, dispatch]);
+  }, [events, activityDispatch, navigationDispatch, historyDispatch]);
 
   useEffect(() => {
     if (transitionBuffer.length === 0) return;
@@ -239,7 +245,9 @@ function TransitionProvider({ children }: PropsWithChildren) {
     };
   }, []);
 
-  return children;
+  return (
+    <TransitionContext.Provider value={{ state, dispatch }}>{children}</TransitionContext.Provider>
+  );
 }
 
 export default TransitionProvider;
