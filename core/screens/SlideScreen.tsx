@@ -281,7 +281,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
     const currentActivityElement = ref.current;
 
     const endSlide = ({ currentActivityElement }: { currentActivityElement: HTMLDivElement }) => {
-      if (!currentActivity?.animate) return;
+      if (!currentActivity?.animate || !isSlidingRef.current) return;
 
       isSlidingRef.current = false;
       isSlidingEndRef.current = false;
@@ -327,7 +327,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
         dispatch({
           type: TransitionActionType.DONE
         });
-      }, 300);
+      }, 50);
     };
 
     const handleMouseUp = (e: globalThis.MouseEvent) =>
@@ -341,7 +341,9 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
       });
 
     currentActivityElement?.addEventListener("mouseup", handleMouseUp);
+    currentActivityElement?.addEventListener("mouseleave", handleMouseUp);
     currentActivityElement?.addEventListener("touchend", handleTouchEnd);
+    currentActivityElement?.addEventListener("touchcancel", handleTouchEnd);
 
     return () => {
       currentActivityElement?.removeEventListener("mouseup", handleMouseUp);

@@ -17,10 +17,7 @@ export default function useNavigation() {
   const {
     state: { index }
   } = useContext(HistoryContext);
-  const {
-    state: { status },
-    dispatch: navigationDispatch
-  } = useContext(NavigationContext);
+  const { dispatch: navigationDispatch } = useContext(NavigationContext);
 
   return {
     push: <T extends BaseActivity["name"]>(
@@ -28,8 +25,6 @@ export default function useNavigation() {
       params: BaseActivityParams[T] = {},
       { animate }: Options = { animate: true }
     ) => {
-      if (status === NavigationStatus.PUSH || status === NavigationStatus.PUSH_NAVIGATING) return;
-
       const nextActivity = state.activities.find((activity) => activity.name === name);
 
       if (!nextActivity) return;
@@ -74,12 +69,6 @@ export default function useNavigation() {
       params: Partial<BaseActivityParams[T]> = {},
       { animate }: Options = { animate: true }
     ) => {
-      if (
-        status === NavigationStatus.STACK_PUSH ||
-        status === NavigationStatus.STACK_PUSH_NAVIGATING
-      )
-        return;
-
       const currentActivity = state.currentActivity;
 
       if (!currentActivity) return;
@@ -127,9 +116,6 @@ export default function useNavigation() {
       params: BaseActivityParams[T] = {},
       { animate }: Options = { animate: true }
     ) => {
-      if (status === NavigationStatus.REPLACE || status === NavigationStatus.REPLACE_NAVIGATING)
-        return;
-
       const nextActivity = state.activities.find((activity) => activity.name === name);
 
       if (!nextActivity) return;
@@ -170,13 +156,6 @@ export default function useNavigation() {
       });
     },
     back: () => {
-      if (
-        status === NavigationStatus.BACK_START ||
-        status === NavigationStatus.BACK ||
-        status === NavigationStatus.BACK_NAVIGATING
-      )
-        return;
-
       window.history.back();
       navigationDispatch({
         type: NavigationActionType.BACK_START
