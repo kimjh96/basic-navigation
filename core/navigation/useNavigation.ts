@@ -170,9 +170,17 @@ export default function useNavigation() {
       });
     },
     back: () => {
-      if (status === NavigationStatus.BACK || status === NavigationStatus.BACK_NAVIGATING) return;
+      if (
+        status === NavigationStatus.BACK_START ||
+        status === NavigationStatus.BACK ||
+        status === NavigationStatus.BACK_NAVIGATING
+      )
+        return;
 
       window.history.back();
+      navigationDispatch({
+        type: NavigationActionType.BACK_START
+      });
     }
   };
 }

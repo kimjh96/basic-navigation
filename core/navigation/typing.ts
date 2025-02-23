@@ -15,6 +15,7 @@ export const enum NavigationStatus {
   STACK_PUSH = "STACK_PUSH",
   REPLACE = "REPLACE",
   BACK = "BACK",
+  BACK_START = "BACK_START",
   PUSH_NAVIGATING = "PUSH_NAVIGATING",
   STACK_PUSH_NAVIGATING = "STACK_PUSH_NAVIGATING",
   REPLACE_NAVIGATING = "REPLACE_NAVIGATING",
@@ -31,6 +32,7 @@ export const enum NavigationActionType {
   STACK_PUSH = "STACK_PUSH",
   REPLACE = "REPLACE",
   BACK = "BACK",
+  BACK_START = "BACK_START",
   PUSH_NAVIGATING = "PUSH_NAVIGATING",
   STACK_PUSH_NAVIGATING = "STACK_PUSH_NAVIGATING",
   REPLACE_NAVIGATING = "REPLACE_NAVIGATING",
@@ -65,6 +67,9 @@ export type NavigationAction =
       path: string;
       params: Record<string, string>;
       animate?: boolean;
+    }
+  | {
+      type: NavigationActionType.BACK_START;
     }
   | { type: NavigationActionType.READY }
   | { type: NavigationActionType.PUSH_NAVIGATING }

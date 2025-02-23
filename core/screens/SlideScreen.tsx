@@ -324,18 +324,9 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
 
       slidingEndTimerRef.current = setTimeout(() => {
         isSlidingEndRef.current = true;
-
-        if (!isTriggered && previousActivityElement) {
-          dispatch({
-            type: TransitionActionType.DONE
-          });
-
-          const style = previousActivityElement.getAttribute("style");
-          const styleObject = styleStringToObject(style || "");
-          styleObject.display = "none";
-
-          previousActivityElement.setAttribute("style", styleObjectToString(styleObject));
-        }
+        dispatch({
+          type: TransitionActionType.DONE
+        });
       }, 300);
     };
 
