@@ -218,6 +218,9 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
         currentClientXRef.current = 1; // 클릭 이벤트 전파 방지
 
         isSlidingRef.current = false;
+        dispatch({
+          type: TransitionActionType.DONE
+        });
         return;
       }
 
@@ -347,7 +350,9 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
 
     return () => {
       currentActivityElement?.removeEventListener("mouseup", handleMouseUp);
+      currentActivityElement?.removeEventListener("mouseleave", handleMouseUp);
       currentActivityElement?.removeEventListener("touchend", handleTouchEnd);
+      currentActivityElement?.removeEventListener("touchcancel", handleTouchEnd);
     };
   }, [currentActivity?.animate, dispatch]);
 
