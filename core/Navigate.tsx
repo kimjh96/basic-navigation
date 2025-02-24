@@ -41,13 +41,13 @@ function Navigate<T extends BaseActivity["name"]>({
   if (isNeitherActiveNorPrev) return null;
 
   const isActive = currentActivity?.name === name && currentActivity?.activePath === activePath;
-  const isFrozen =
-    !isActive &&
-    transitionStatus == TransitionStatus.DONE &&
-    (navigationStatus === NavigationStatus.PUSH_DONE ||
-      navigationStatus === NavigationStatus.STACK_PUSH_DONE ||
-      navigationStatus === NavigationStatus.REPLACE_DONE ||
-      navigationStatus === NavigationStatus.BACK_DONE);
+  const isNavigated =
+    navigationStatus === NavigationStatus.READY ||
+    navigationStatus === NavigationStatus.PUSH_DONE ||
+    navigationStatus === NavigationStatus.STACK_PUSH_DONE ||
+    navigationStatus === NavigationStatus.REPLACE_DONE ||
+    navigationStatus === NavigationStatus.BACK_DONE;
+  const isFrozen = !isActive && isNavigated && transitionStatus == TransitionStatus.DONE;
 
   return (
     <div
@@ -59,7 +59,8 @@ function Navigate<T extends BaseActivity["name"]>({
         position: "fixed",
         width: "100%",
         height: "100%",
-        zIndex: isActive ? 1 : 0
+        zIndex: isActive ? 1 : 0,
+        pointerEvents: isNavigated ? undefined : "none"
       }}
     >
       <Freeze freeze={isFrozen}>{children}</Freeze>

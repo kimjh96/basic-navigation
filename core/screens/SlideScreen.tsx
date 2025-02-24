@@ -38,6 +38,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
   const ref = useRef<HTMLDivElement>(null);
   const isSlidingRef = useRef(false);
   const isScrollingRef = useRef(false);
+  const isTriggeredSlidingRef = useRef(false);
   const startClientXRef = useRef(0);
   const startClientYRef = useRef(0);
   const startScrollTopRef = useRef(0);
@@ -64,6 +65,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
     startClientYRef.current = clientY;
     startScrollTopRef.current = scrollTop;
     isSlidingRef.current = true;
+    isTriggeredSlidingRef.current = false;
 
     if (previousActivityElement) {
       const style = previousActivityElement.getAttribute("style");
@@ -218,6 +220,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
         currentClientXRef.current = 1; // 클릭 이벤트 전파 방지
 
         isSlidingRef.current = false;
+
         dispatch({
           type: TransitionActionType.DONE
         });
@@ -253,6 +256,8 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
       if (targetElement.id === "activity-bar" || e.cancelable) {
         e.preventDefault();
       }
+
+      isTriggeredSlidingRef.current = true;
     };
 
     const handleMouseMove = (e: globalThis.MouseEvent) =>
@@ -284,9 +289,10 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
     const currentActivityElement = ref.current;
 
     const endSlide = ({ currentActivityElement }: { currentActivityElement: HTMLDivElement }) => {
-      if (!currentActivity?.animate || !isSlidingRef.current) return;
+      if (!currentActivity?.animate || !isTriggeredSlidingRef.current) return;
 
       isSlidingRef.current = false;
+      isTriggeredSlidingRef.current = false;
       isSlidingEndRef.current = false;
 
       const previousActivityElement = currentActivityElement.parentElement?.previousElementSibling;

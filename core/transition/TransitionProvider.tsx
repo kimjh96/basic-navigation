@@ -35,6 +35,10 @@ function TransitionProvider({ children }: PropsWithChildren) {
   const isFlushingRef = useRef(false);
 
   useEffect(() => {
+    if (isFlushingRef.current) {
+      return;
+    }
+
     for (const event of events) {
       const id = `${event.path}-${event.status}-${event.recordedAt}`;
 
