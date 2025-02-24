@@ -1,6 +1,6 @@
 {
   "name": "basic-navigation",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "./dist/index.es.js",
   "module": "./dist/index.es.js",
   "types": "./dist/index.d.ts",
