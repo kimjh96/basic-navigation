@@ -57,7 +57,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
 
         setTransitionBuffer((prevState) => {
           if (isFlushingRef.current) {
-            return prevState;
+            return prevState.filter((prevBuffer) => prevBuffer.id !== id);
           }
 
           isFlushingRef.current = true;
@@ -97,7 +97,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
 
         setTransitionBuffer((prevState) => {
           if (isFlushingRef.current) {
-            return prevState;
+            return prevState.filter((prevBuffer) => prevBuffer.id !== id);
           }
 
           isFlushingRef.current = true;
@@ -137,7 +137,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
 
         setTransitionBuffer((prevState) => {
           if (isFlushingRef.current) {
-            return prevState;
+            return prevState.filter((prevBuffer) => prevBuffer.id !== id);
           }
 
           isFlushingRef.current = true;
@@ -181,7 +181,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
 
         setTransitionBuffer((prevState) => {
           if (isFlushingRef.current) {
-            return prevState;
+            return prevState.filter((prevBuffer) => prevBuffer.id !== id);
           }
 
           isFlushingRef.current = true;
@@ -230,7 +230,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
     (async () => {
       for (const { flush } of transitionBuffer) {
         if (await flush(records)) {
-          setTransitionBuffer((prevState) => prevState.slice(0, -1));
+          setTransitionBuffer((prevState) => prevState.slice(1));
           isFlushingRef.current = false;
         }
       }

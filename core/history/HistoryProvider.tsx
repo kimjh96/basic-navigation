@@ -49,7 +49,7 @@ function HistoryProvider({
     const handlePopState = (e: PopStateEvent) => {
       const nextIndex = e.state?.index;
       const status = e.state?.status;
-      const animate = e.state?.animate;
+      const animate = e.state?.animate || true;
       const { pathname, search } = window.location;
       const path = `${pathname}${search}`;
       const params = getParams(paths, pathname, search);
