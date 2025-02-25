@@ -285,7 +285,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
     const currentActivityElement = ref.current;
 
     const endSlide = ({ currentActivityElement }: { currentActivityElement: HTMLDivElement }) => {
-      if (!currentActivity?.animate) return;
+      if (!currentActivity?.animate || !!translateX) return;
 
       isSlidingRef.current = false;
       isSlidingEndRef.current = false;
@@ -351,7 +351,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
       currentActivityElement?.removeEventListener("mouseup", handleMouseUp);
       currentActivityElement?.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [currentActivity?.animate, dispatch]);
+  }, [currentActivity?.animate, dispatch, translateX]);
 
   useEffect(() => {
     const currentActivityElement = ref.current;
