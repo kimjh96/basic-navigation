@@ -44,7 +44,7 @@ function SlideScreen({ children, backgroundColor = "white" }: PropsWithChildren<
   const currentClientXRef = useRef(0);
   const backdropRef = useRef<HTMLDivElement>(null);
   const isSlidingEndRef = useRef(true);
-  const slidingEndTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const slidingEndTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   const startSlide = ({
     clientX,

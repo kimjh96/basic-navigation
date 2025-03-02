@@ -31,7 +31,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
     }>
   >([]);
 
-  const transitionTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const transitionTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
   const isFlushingRef = useRef(false);
 
   useEffect(() => {
