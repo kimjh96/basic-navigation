@@ -1,6 +1,6 @@
 {
   "name": "basic-navigation",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "main": "./dist/core/index.mjs",
   "module": "./dist/core/index.mjs",
   "types": "./dist/core/index.d.ts",
