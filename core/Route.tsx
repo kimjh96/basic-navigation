@@ -9,19 +9,19 @@ import { NavigationStatus } from "@core/navigation/typing";
 import TransitionContext from "@core/transition/TransitionContext";
 import { TransitionStatus } from "@core/transition/typing";
 
-export interface NavigateProps<T extends BaseActivity["name"] = BaseActivity["name"]> {
+export interface RouteProps<T extends BaseActivity["name"] = BaseActivity["name"]> {
   name: T;
   path: BaseActivityPath[T];
   params?: Record<string, string>;
   activePath?: string;
 }
 
-function Navigate<T extends BaseActivity["name"]>({
+function Route<T extends BaseActivity["name"]>({
   children,
   name,
   path,
   activePath
-}: PropsWithChildren<NavigateProps<T>>) {
+}: PropsWithChildren<RouteProps<T>>) {
   const {
     state: { currentActivity, previousActivity }
   } = useContext(ActivityContext);
@@ -68,4 +68,4 @@ function Navigate<T extends BaseActivity["name"]>({
   );
 }
 
-export default Navigate;
+export default Route;

@@ -2,9 +2,9 @@ import { PropsWithChildren, ReactElement, useReducer } from "react";
 
 import { pathToRegexp } from "path-to-regexp";
 
-import type { NavigateProps } from "@core/Navigate";
+import type { RouteProps } from "@core/Route";
 
-import type { NavigatorProps } from "@core/Navigator";
+import type { RouterProps } from "@core/Router";
 
 import getActivities from "@utils/getActivities";
 
@@ -14,8 +14,8 @@ import isServer from "@utils/isServer";
 import ActivityContext from "@core/activity/ActivityContext";
 import { activityReducer } from "@core/activity/store";
 
-interface ActivityProviderProps extends Pick<NavigatorProps, "initPath"> {
-  navigates: ReactElement<NavigateProps> | ReactElement<NavigateProps>[];
+interface ActivityProviderProps extends Pick<RouterProps, "initPath"> {
+  navigates: ReactElement<RouteProps> | ReactElement<RouteProps>[];
 }
 
 function ActivityProvider({

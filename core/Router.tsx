@@ -1,6 +1,6 @@
 import { ReactElement } from "react";
 
-import type { NavigateProps } from "@core/Navigate";
+import type { RouteProps } from "@core/Route";
 
 import ActivityProvider from "@core/activity/ActivityProvider";
 import HistoryProvider from "@core/history/HistoryProvider";
@@ -8,12 +8,12 @@ import NavigationProvider from "@core/navigation/NavigationProvider";
 import Renderer from "@core/renderer/Renderer";
 import TransitionProvider from "@core/transition/TransitionProvider";
 
-export interface NavigatorProps {
-  children: ReactElement<NavigateProps> | ReactElement<NavigateProps>[];
+export interface RouterProps {
+  children: ReactElement<RouteProps> | ReactElement<RouteProps>[];
   initPath?: string;
 }
 
-function Navigator({ children, initPath }: NavigatorProps) {
+function Navigator({ children, initPath }: RouterProps) {
   return (
     <ActivityProvider navigates={children} initPath={initPath}>
       <NavigationProvider>

@@ -1,6 +1,6 @@
 import { PropsWithChildren, useContext, useEffect, useReducer } from "react";
 
-import type { NavigatorProps } from "@core/Navigator";
+import type { RouterProps } from "@core/Router";
 
 import getParams from "@utils/getParams";
 import isServer from "@utils/isServer";
@@ -12,10 +12,7 @@ import { HistoryActionType } from "@core/history/typing";
 import NavigationContext from "@core/navigation/NavigationContext";
 import { NavigationActionType, NavigationStatus } from "@core/navigation/typing";
 
-function HistoryProvider({
-  children,
-  initPath
-}: PropsWithChildren<Pick<NavigatorProps, "initPath">>) {
+function HistoryProvider({ children, initPath }: PropsWithChildren<Pick<RouterProps, "initPath">>) {
   const paths = useContext(ActivityContext).state.activities.map(({ path }) => path);
   const [state, dispatch] = useReducer(
     historyReducer,

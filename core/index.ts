@@ -1,5 +1,5 @@
-export { default as Navigator } from "./Navigator";
-export { default as Navigate } from "./Navigate";
+export { default as Router } from "./Router";
+export { default as Route } from "./Route";
 export { default as useNavigation } from "./navigation/useNavigation";
 export { default as SlideScreen } from "./screens/SlideScreen";
 export { default as useActivity } from "./activity/useActivity";
