@@ -8,7 +8,6 @@ basic-navigation 은 모바일 웹을 위한 기초적인 라우팅 및 탐색�
 </p>
 
 ## 🚀 특징
-- 간단한 사용
 - 화면 전환 효과 지원
 - Server-Side Rendering 지원
 
@@ -18,20 +17,16 @@ pnpm add basic-navigation
 ```
 
 ```tsx
-import { Navigator, Navigate } from 'basic-naivgation';
-import HomeActivity from '@activites/HomeActivity';
+import { Router, Route } from 'basic-naivgation';
+import HomeActivity from '@activites/HomeActivity'; // your component
 import ProductActivity from '@activites/ProductActivity'
 
 function App() {
   return (
-    <Navigator>
-      <Navigate name={'HomeActivity'} path={'/'}>
-        <HomeActivity />
-      </Navigate>
-      <Navigate name={'ProductActivity'} path={'/product/:id'}>
-        <ProductActivity />
-      </Navigate>
-    </Navigator>
+    <Router>
+      <Route name={'HomeActivity'} path={'/'} activity={<HomeActivity />} />
+      <Route name={'ProductActivity'} path={'/product/:id'} activity={<ProductActivity />} />
+    </Router>
   );
 }
 
@@ -44,7 +39,7 @@ import { SlideScreen } from 'basic-naivgation';
 function HomeActivity() {
   return (
     <SlideScreen>
-      Welcome HomeActivity
+      HomeActivity
     </SlideScreen>
   );
 }
@@ -64,8 +59,8 @@ function HomeActivity() {
 
   return (
     <SlideScreen>
-      Welcome HomeActivity
-      <button onClick={handleClick}>go to ProductActivity</button>
+      HomeActivity
+      <button onClick={handleClick}>Go to ProductActivity</button>
     </SlideScreen>
   );
 }

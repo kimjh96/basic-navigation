@@ -1,4 +1,4 @@
-import { PropsWithChildren, useContext, useRef } from "react";
+import { ReactNode, useContext, useRef } from "react";
 
 import { Freeze } from "react-freeze";
 
@@ -14,14 +14,15 @@ export interface RouteProps<T extends BaseActivity["name"] = BaseActivity["name"
   path: BaseActivityPath[T];
   params?: Record<string, string>;
   activePath?: string;
+  activity: ReactNode;
 }
 
 function Route<T extends BaseActivity["name"]>({
-  children,
   name,
   path,
-  activePath
-}: PropsWithChildren<RouteProps<T>>) {
+  activePath,
+  activity
+}: RouteProps<T>) {
   const {
     state: { currentActivity, previousActivity }
   } = useContext(ActivityContext);
@@ -63,7 +64,7 @@ function Route<T extends BaseActivity["name"]>({
         pointerEvents: isNavigated ? undefined : "none"
       }}
     >
-      <Freeze freeze={isFrozen}>{children}</Freeze>
+      <Freeze freeze={isFrozen}>{activity}</Freeze>
     </div>
   );
 }
