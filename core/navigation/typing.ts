@@ -1,12 +1,14 @@
 export interface Navigation {
   status: NavigationStatus;
-  events: {
-    status: NavigationStatus;
-    path: string;
-    params: Record<string, string>;
-    recordedAt: number;
-    animate?: boolean;
-  }[];
+  events: NavigationEvent[];
+}
+
+export interface NavigationEvent {
+  status: NavigationStatus;
+  path: string;
+  params: Record<string, string>;
+  recordedAt: number;
+  animate?: boolean;
 }
 
 export const enum NavigationStatus {

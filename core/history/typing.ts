@@ -1,11 +1,13 @@
 export interface History {
   index: number;
-  records: {
-    type: HistoryActionType;
-    path: string;
-    params: Record<string, string>;
-    animate?: boolean;
-  }[];
+  records: HistoryRecord[];
+}
+
+export interface HistoryRecord {
+  type: HistoryActionType;
+  path: string;
+  params: Record<string, string>;
+  animate?: boolean;
 }
 
 export const enum HistoryActionType {
