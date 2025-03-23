@@ -1,7 +1,7 @@
 {
   "name": "basic-navigation",
   "description": "Basic routing and navigation library for React",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "main": "./dist/core/index.mjs",
   "module": "./dist/core/index.mjs",
   "types": "./dist/core/index.d.ts",
