@@ -2,6 +2,7 @@ import styleObjectToString from "@utils/styleObjectToString";
 
 import styleStringToObject from "@utils/styleStringToObject";
 
+import BreathAnimation from "@core/animation/BreathAnimation";
 import FadeAnimation from "@core/animation/FadeAnimation";
 import SlideAnimation from "@core/animation/SlideAnimation";
 import { AnimationStatus, AnimationType, BaseAnimation } from "@core/animation/typing";
@@ -13,6 +14,8 @@ class AnimationFactory {
         return new SlideAnimation();
       case "fade":
         return new FadeAnimation();
+      case "breath":
+        return new BreathAnimation();
       default:
         return new SlideAnimation();
     }
@@ -61,6 +64,16 @@ class Animator {
       case "ready-to-deactivate-slide":
         return {
           transform: "translate3d(100%, 0, 0)"
+        };
+      case "ready-to-activate-breath":
+        return {
+          opacity: 1,
+          transform: "scale(1)"
+        };
+      case "ready-to-deactivate-breath":
+        return {
+          opacity: 0,
+          transform: "scale(0.985)"
         };
       default:
         return {};
