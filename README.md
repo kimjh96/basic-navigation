@@ -8,7 +8,7 @@ basic-navigation 은 모바일 웹을 위한 기초적인 라우팅 및 탐색�
 </p>
 
 ## 🚀 특징
-- 화면 전환 효과 지원
+- 다양한 화면 전환 효과 지원
 - Server-Side Rendering 지원
 
 ## 설치 및 시작
@@ -34,23 +34,22 @@ export default App;
 ```
 
 ```tsx
-import { SlideScreen } from 'basic-naivgation';
+import { AppScreen } from 'basic-naivgation';
 
 function HomeActivity() {
   return (
-    <SlideScreen>
+    <AppScreen>
       HomeActivity
-    </SlideScreen>
+    </AppScreen>
   );
 }
 
 export default HomeActivity;
 ```
 
-## 예시
-### 탐색
+## 탐색
 ```tsx
-import { SlideScreen, useNavigation } from 'basic-naivgation';
+import { AppScreen, useNavigation } from 'basic-naivgation';
 
 function HomeActivity() {
   const navigation = useNavigation();
@@ -58,19 +57,18 @@ function HomeActivity() {
   const handleClick = () => navigation.push('ProductActivity', { id: '1' });
 
   return (
-    <SlideScreen>
+    <AppScreen>
       HomeActivity
       <button onClick={handleClick}>Go to ProductActivity</button>
-    </SlideScreen>
+    </AppScreen>
   );
 }
 
 export default HomeActivity;
 ```
 
+## TypeScript
 ```typescript
-// with TypeScript
-
 import 'basic-navigation';
 
 declare module "basic-navigation" {
