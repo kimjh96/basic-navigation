@@ -11,7 +11,7 @@ import {
 
 import ActivityContext from "@core/activity/ActivityContext";
 import Animator from "@core/animation/Animator";
-import { AnimationStatus, AnimationType } from "@core/animation/typing";
+import { AnimationType } from "@core/animation/typing";
 import NavigationContext from "@core/navigation/NavigationContext";
 import { NavigationStatus } from "@core/navigation/typing";
 import TransitionContext from "@core/transition/TransitionContext";
@@ -43,15 +43,14 @@ function AppScreen({
   } = useContext(NavigationContext);
 
   const [transitionPreparationStyle, setTransitionPreparationStyle] = useState(() => {
-    const animationStatus = (
-      [NavigationStatus.READY, NavigationStatus.REPLACE_DONE].includes(status)
-        ? "ready-to-activate"
-        : "ready-to-deactivate"
-    ) as AnimationStatus;
+    const animationStatus = [NavigationStatus.READY, NavigationStatus.REPLACE_DONE].includes(status)
+      ? "ready-to-activate"
+      : "ready-to-deactivate";
 
     return {
       style: Animator.getTransitionPreparationStyle(
-        `${animationStatus}-${currentActivity?.animationType as AnimationType}`
+        animationStatus,
+        currentActivity?.animationType
       ),
       status: animationStatus
     };
@@ -133,11 +132,12 @@ function AppScreen({
 
       setTransitionPreparationStyle({
         style: Animator.getTransitionPreparationStyle(
-          `ready-to-activate-${currentActivity?.animationType as AnimationType}`
+          "ready-to-activate",
+          currentActivity?.animationType
         ),
         status: "ready-to-activate"
       });
-      setEnableBackdrop(!!animatorRef.current?.animationSet?.enableBackdrop);
+      setEnableBackdrop(!!animatorRef.current?.animation?.enableBackdrop);
     }
   }, [currentActivity?.activePath, currentActivity?.animate, currentActivity?.animationType]);
 
@@ -151,7 +151,8 @@ function AppScreen({
 
       setTransitionPreparationStyle({
         style: Animator.getTransitionPreparationStyle(
-          `ready-to-activate-${previousActivity?.animationType as AnimationType}`
+          "ready-to-activate",
+          previousActivity?.animationType
         ),
         status: "ready-to-activate"
       });
@@ -175,7 +176,8 @@ function AppScreen({
 
       setTransitionPreparationStyle({
         style: Animator.getTransitionPreparationStyle(
-          `ready-to-deactivate-${waitingActivity?.animationType as AnimationType}`
+          "ready-to-deactivate",
+          waitingActivity?.animationType
         ),
         status: "ready-to-deactivate"
       });
@@ -239,7 +241,7 @@ function AppScreen({
       const progress = deltaX / window.innerWidth;
       const clampedProgress = Math.min(Math.max(progress, 0), 1);
 
-      if (animatorRef.current?.animationSet?.enableBackdrop) {
+      if (animatorRef.current?.animation?.enableBackdrop) {
         if (backdropRef.current) {
           backdropRef.current.style.transition = "none";
           backdropRef.current.style.opacity = `${1 - clampedProgress}`;
@@ -294,7 +296,7 @@ function AppScreen({
       isTransitioningRef.current = false;
       isTransitionEndRef.current = false;
 
-      if (animatorRef.current?.animationSet?.enableBackdrop) {
+      if (animatorRef.current?.animation?.enableBackdrop) {
         if (backdropRef.current) {
           backdropRef.current.style.transition = "opacity 0.3s";
           backdropRef.current.style.opacity = "1";
@@ -379,7 +381,6 @@ function AppScreen({
           transition: "opacity 0.3s",
           opacity:
             currentActivity?.animate &&
-            animatorRef.current?.animationSet?.enableBackdrop &&
             transitionPreparationStyle.status === "ready-to-activate" &&
             enableBackdrop
               ? 1

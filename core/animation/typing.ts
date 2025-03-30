@@ -1,5 +1,5 @@
 export type AnimationType = "slide" | "fade" | "breath";
-export type AnimationStatus =
+export type AnimationPreparationStatus =
   | "ready-for-activation"
   | "ready-for-deactivation"
   | "ready-to-activate"
@@ -13,10 +13,10 @@ interface StyleObject {
 export interface BaseAnimation {
   name: AnimationType;
   enableBackdrop: boolean;
-  active: (status?: AnimationStatus) => StyleObject;
-  inactive: (status?: AnimationStatus) => StyleObject;
-  immediateActive: (status?: AnimationStatus) => StyleObject;
-  immediateInactive: (status?: AnimationStatus) => StyleObject;
+  active: (status?: AnimationPreparationStatus) => StyleObject;
+  inactive: (status?: AnimationPreparationStatus) => StyleObject;
+  immediateActive: (status?: AnimationPreparationStatus) => StyleObject;
+  immediateInactive: (status?: AnimationPreparationStatus) => StyleObject;
   activeProgress: (value: number, clientX: number) => StyleObject;
   inactiveProgress: (value: number) => StyleObject;
 }

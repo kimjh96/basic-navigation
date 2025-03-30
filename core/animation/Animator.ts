@@ -5,7 +5,7 @@ import styleStringToObject from "@utils/styleStringToObject";
 import BreathAnimation from "@core/animation/BreathAnimation";
 import FadeAnimation from "@core/animation/FadeAnimation";
 import SlideAnimation from "@core/animation/SlideAnimation";
-import { AnimationStatus, AnimationType, BaseAnimation } from "@core/animation/typing";
+import { AnimationPreparationStatus, AnimationType, BaseAnimation } from "@core/animation/typing";
 
 class AnimationFactory {
   static createAnimation(animationType: AnimationType) {
@@ -25,18 +25,32 @@ class AnimationFactory {
 class Animator {
   private readonly getPreviousActivityElement: () => HTMLElement | undefined;
   private readonly getCurrentActivityElement: () => HTMLElement | undefined;
-  readonly animation: AnimationType;
-  readonly animationSet: BaseAnimation;
+  readonly animationType: AnimationType;
+  readonly animation: BaseAnimation;
 
   constructor(
     getPreviousActivityElement: () => HTMLElement | undefined,
     getCurrentActivityElement: () => HTMLElement | undefined,
-    animation: AnimationType
+    animationType: AnimationType
   ) {
     this.getPreviousActivityElement = getPreviousActivityElement;
     this.getCurrentActivityElement = getCurrentActivityElement;
-    this.animation = animation;
-    this.animationSet = AnimationFactory.createAnimation(animation);
+    this.animationType = animationType;
+    this.animation = AnimationFactory.createAnimation(animationType);
+  }
+
+  static getTransitionPreparationStyle(
+    status: AnimationPreparationStatus,
+    animationType?: AnimationType
+  ) {
+    switch (animationType) {
+      case "fade":
+        return FadeAnimation.getPreparationStyle(status);
+      case "breath":
+        return BreathAnimation.getPreparationStyle(status);
+      default:
+        return SlideAnimation.getPreparationStyle(status);
+    }
   }
 
   get previousActivityElement() {
@@ -47,82 +61,49 @@ class Animator {
     return this.getCurrentActivityElement();
   }
 
-  static getTransitionPreparationStyle(statusWithType: `${AnimationStatus}-${AnimationType}`) {
-    switch (statusWithType) {
-      case "ready-to-activate-fade":
-        return {
-          opacity: 1
-        };
-      case "ready-to-deactivate-fade":
-        return {
-          opacity: 0
-        };
-      case "ready-to-activate-slide":
-        return {
-          transform: "translate3d(0, 0, 0)"
-        };
-      case "ready-to-deactivate-slide":
-        return {
-          transform: "translate3d(100%, 0, 0)"
-        };
-      case "ready-to-activate-breath":
-        return {
-          opacity: 1,
-          transform: "scale(1)"
-        };
-      case "ready-to-deactivate-breath":
-        return {
-          opacity: 0,
-          transform: "scale(0.985)"
-        };
-      default:
-        return {};
-    }
-  }
-
-  activateCurrentActivityElement(animate = true, status?: AnimationStatus) {
+  activateCurrentActivityElement(animate = true, status?: AnimationPreparationStatus) {
     const style = this.currentActivityElement?.getAttribute("style");
     const styleObject = styleStringToObject(style || "");
 
     Object.assign(
       styleObject,
-      animate ? this.animationSet.active(status) : this.animationSet.immediateActive(status)
+      animate ? this.animation.active(status) : this.animation.immediateActive(status)
     );
 
     this.currentActivityElement?.setAttribute("style", styleObjectToString(styleObject));
   }
 
-  deactivateCurrentActivityElement(animate = true, status?: AnimationStatus) {
+  deactivateCurrentActivityElement(animate = true, status?: AnimationPreparationStatus) {
     const style = this.currentActivityElement?.getAttribute("style");
     const styleObject = styleStringToObject(style || "");
 
     Object.assign(
       styleObject,
-      animate ? this.animationSet.inactive(status) : this.animationSet.immediateInactive(status)
+      animate ? this.animation.inactive(status) : this.animation.immediateInactive(status)
     );
 
     this.currentActivityElement?.setAttribute("style", styleObjectToString(styleObject));
   }
 
-  public activatePreviousActivityElement(animate = true, status?: AnimationStatus) {
+  public activatePreviousActivityElement(animate = true, status?: AnimationPreparationStatus) {
     const style = this.previousActivityElement?.getAttribute("style");
     const styleObject = styleStringToObject(style || "");
 
     Object.assign(
       styleObject,
-      animate ? this.animationSet.active(status) : this.animationSet.immediateActive(status)
+      animate ? this.animation.active(status) : this.animation.immediateActive(status)
     );
 
     this.previousActivityElement?.setAttribute("style", styleObjectToString(styleObject));
   }
 
-  deactivatePreviousActivityElement(animate = true, status?: AnimationStatus) {
+  deactivatePreviousActivityElement(animate = true, status?: AnimationPreparationStatus) {
     const style = this.previousActivityElement?.getAttribute("style");
     const styleObject = styleStringToObject(style || "");
 
     Object.assign(
       styleObject,
-      animate ? this.animationSet.inactive(status) : this.animationSet.immediateInactive(status)
+      animate ? this.animation.inactive(status) : this.animation.immediateInactive(status)
     );
 
     this.previousActivityElement?.setAttribute("style", styleObjectToString(styleObject));
@@ -132,7 +113,7 @@ class Animator {
     const style = this.currentActivityElement?.getAttribute("style");
     const styleObject = styleStringToObject(style || "");
 
-    Object.assign(styleObject, this.animationSet.activeProgress(value, clientX));
+    Object.assign(styleObject, this.animation.activeProgress(value, clientX));
 
     this.currentActivityElement?.setAttribute("style", styleObjectToString(styleObject));
   }
@@ -143,7 +124,7 @@ class Animator {
     styleObject.display = "block";
     styleObject.transition = "none";
 
-    Object.assign(styleObject, this.animationSet.inactiveProgress(value));
+    Object.assign(styleObject, this.animation.inactiveProgress(value));
 
     this.previousActivityElement?.setAttribute("style", styleObjectToString(styleObject));
   }

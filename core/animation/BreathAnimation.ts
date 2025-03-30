@@ -1,8 +1,25 @@
-import { AnimationType, BaseAnimation } from "@core/animation/typing";
+import { AnimationPreparationStatus, AnimationType, BaseAnimation } from "@core/animation/typing";
 
 class BreathAnimation implements BaseAnimation {
   name: AnimationType = "breath";
   enableBackdrop = false;
+
+  static getPreparationStyle = (status: AnimationPreparationStatus) => {
+    switch (status) {
+      case "ready-to-activate":
+        return {
+          opacity: "1",
+          transform: "scale(1)"
+        };
+      case "ready-to-deactivate":
+        return {
+          opacity: "0",
+          transform: "scale(0.985)"
+        };
+      default:
+        return {};
+    }
+  };
 
   active = () => ({
     transition: "opacity 0.3s, transform 0.3s",

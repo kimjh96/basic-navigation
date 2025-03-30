@@ -1,10 +1,25 @@
-import { AnimationType, AnimationStatus, BaseAnimation } from "@core/animation/typing";
+import { AnimationType, BaseAnimation, AnimationPreparationStatus } from "@core/animation/typing";
 
 class SlideAnimation implements BaseAnimation {
   name: AnimationType = "slide";
   enableBackdrop = true;
 
-  active = (status?: AnimationStatus) => {
+  static getPreparationStyle = (status: AnimationPreparationStatus) => {
+    switch (status) {
+      case "ready-to-activate":
+        return {
+          transform: "translate3d(0, 0, 0)"
+        };
+      case "ready-to-deactivate":
+        return {
+          transform: "translate3d(100%, 0, 0)"
+        };
+      default:
+        return {};
+    }
+  };
+
+  active = (status?: AnimationPreparationStatus) => {
     if (status === "ready-for-activation") {
       return {
         transition: "transform 0.3s",
@@ -18,7 +33,7 @@ class SlideAnimation implements BaseAnimation {
     };
   };
 
-  inactive = (status?: AnimationStatus) => {
+  inactive = (status?: AnimationPreparationStatus) => {
     if (status === "ready-for-activation") {
       return {
         transition: "transform 0.3s",
@@ -39,7 +54,7 @@ class SlideAnimation implements BaseAnimation {
     };
   };
 
-  immediateActive = (status?: AnimationStatus) => {
+  immediateActive = (status?: AnimationPreparationStatus) => {
     if (status === "ready-for-activation") {
       return {
         transition: "none",
@@ -53,7 +68,7 @@ class SlideAnimation implements BaseAnimation {
     };
   };
 
-  immediateInactive = (status?: AnimationStatus) => {
+  immediateInactive = (status?: AnimationPreparationStatus) => {
     if (status === "ready-for-activation") {
       return {
         transition: "none",
