@@ -121,8 +121,12 @@ function AppScreen({
   useEffect(() => {
     const activePath =
       animatorRef?.current?.currentActivityElement?.parentElement?.getAttribute("data-active-path");
+    const previousActivePath = animatorRef?.current?.previousActivityElement;
 
-    if (activePath === currentActivity?.activePath) {
+    if (
+      activePath === currentActivity?.activePath &&
+      previousActivePath !== currentActivity?.activePath
+    ) {
       animatorRef.current?.restoreCurrentActivityElementScroll();
       animatorRef.current?.deactivatePreviousActivityElement(
         currentActivity?.animate,

@@ -35,18 +35,30 @@ function TransitionProvider({ children }: PropsWithChildren) {
   const createTransitionTimer = (callback: () => void, delay: number = 300) => {
     return new Promise<boolean>((resolve) => {
       const timer = setTimeout(() => {
-        callback();
-        transitionTimerRef.current.delete(timer);
-        pendingResolveRef.current = resolve;
+        try {
+          callback();
+          resolve(true);
+        } catch {
+          resolve(false);
+        } finally {
+          transitionTimerRef.current.delete(timer);
+          pendingResolveRef.current = null;
+        }
       }, delay);
       transitionTimerRef.current.add(timer);
     });
   };
 
   const clearAllTimers = () => {
-    transitionTimerRef.current.forEach((timer) => clearTimeout(timer));
+    transitionTimerRef.current.forEach((timer) => {
+      clearTimeout(timer);
+      transitionTimerRef.current.delete(timer);
+    });
     transitionTimerRef.current.clear();
-    pendingResolveRef.current = null;
+    if (pendingResolveRef.current) {
+      pendingResolveRef.current(false);
+      pendingResolveRef.current = null;
+    }
   };
 
   useEffect(() => {
@@ -140,7 +152,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
             type: NavigationActionType.REPLACE_NAVIGATING
           });
           historyDispatch({
-            type: HistoryActionType.REPLACE,
+            type: HistoryActionType.PUSH,
             path: event.path,
             params: event.params,
             animate: event.animate,
@@ -154,30 +166,32 @@ function TransitionProvider({ children }: PropsWithChildren) {
             animationType: event.animationType
           });
 
-          const { path, params, animate, animationType } =
-            recordsRef.current[recordsRef.current.length - 3] ||
-            recordsRef.current[recordsRef.current.length - 2] ||
-            recordsRef.current[recordsRef.current.length - 1];
+          await createTransitionTimer(async () => {
+            const { path, params, animate, animationType } =
+              recordsRef.current[recordsRef.current.length - 3] ||
+              recordsRef.current[recordsRef.current.length - 2] ||
+              recordsRef.current[recordsRef.current.length - 1];
 
-          activityDispatch({
-            type: ActivityActionType.UPDATE_SPECIFY_PREVIOUS_ACTIVITY,
-            path,
-            params,
-            animate,
-            animationType
-          });
+            activityDispatch({
+              type: ActivityActionType.UPDATE_SPECIFY_PREVIOUS_ACTIVITY,
+              path,
+              params,
+              animate,
+              animationType
+            });
 
-          await createTransitionTimer(() => {
-            navigationDispatch({
-              type: NavigationActionType.REPLACE_DONE
-            });
-            historyDispatch({
-              type: HistoryActionType.REPLACE,
-              path: event.path,
-              params: event.params,
-              animate: event.animate,
-              animationType: event.animationType
-            });
+            await createTransitionTimer(() => {
+              historyDispatch({
+                type: HistoryActionType.REPLACE,
+                path: event.path,
+                params: event.params,
+                animate: event.animate,
+                animationType: event.animationType
+              });
+              navigationDispatch({
+                type: NavigationActionType.REPLACE_DONE
+              });
+            }, 10);
           });
         } else if (event.status === NavigationStatus.BACK) {
           navigationDispatch({
@@ -192,7 +206,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
             });
           }
 
-          await createTransitionTimer(() => {
+          await createTransitionTimer(async () => {
             const { path, params, animate, animationType } =
               recordsRef.current[recordsRef.current.length - 3] ||
               recordsRef.current[recordsRef.current.length - 2] ||
@@ -206,10 +220,12 @@ function TransitionProvider({ children }: PropsWithChildren) {
               animationType
             });
 
-            navigationDispatch({
-              type: NavigationActionType.BACK_DONE
-            });
-            historyDispatch({ type: HistoryActionType.BACK });
+            await createTransitionTimer(() => {
+              historyDispatch({ type: HistoryActionType.BACK });
+              navigationDispatch({
+                type: NavigationActionType.BACK_DONE
+              });
+            }, 10);
           });
         }
       } finally {
