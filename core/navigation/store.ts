@@ -15,7 +15,8 @@ export function navigationReducer(state: Navigation, action: NavigationAction): 
           path: action.path,
           params: action.params,
           recordedAt: Date.now(),
-          animate: action.animate
+          animate: action.animate,
+          animationType: action.animationType
         })
       };
     case NavigationActionType.STACK_PUSH:
@@ -26,7 +27,8 @@ export function navigationReducer(state: Navigation, action: NavigationAction): 
           path: action.path,
           params: action.params,
           recordedAt: Date.now(),
-          animate: action.animate
+          animate: action.animate,
+          animationType: action.animationType
         })
       };
     case NavigationActionType.REPLACE:
@@ -37,7 +39,8 @@ export function navigationReducer(state: Navigation, action: NavigationAction): 
           path: action.path,
           params: action.params,
           recordedAt: Date.now(),
-          animate: action.animate
+          animate: action.animate,
+          animationType: action.animationType
         })
       };
     case NavigationActionType.BACK:
@@ -48,7 +51,8 @@ export function navigationReducer(state: Navigation, action: NavigationAction): 
           path: action.path,
           params: action.params,
           recordedAt: Date.now(),
-          animate: action.animate
+          animate: action.animate,
+          animationType: action.animationType
         })
       };
     case NavigationActionType.BACK_START:

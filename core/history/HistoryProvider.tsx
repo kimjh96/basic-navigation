@@ -46,7 +46,8 @@ function HistoryProvider({ children, initPath }: PropsWithChildren<Pick<RouterPr
     const handlePopState = (e: PopStateEvent) => {
       const nextIndex = e.state?.index;
       const status = e.state?.status;
-      const animate = e.state?.animate || true;
+      const animate = e.state?.animate;
+      const animationType = e.state?.animationType;
       const { pathname, search } = window.location;
       const path = `${pathname}${search}`;
       const params = getParams(paths, pathname, search);
@@ -62,28 +63,32 @@ function HistoryProvider({ children, initPath }: PropsWithChildren<Pick<RouterPr
             type: NavigationActionType.BACK,
             path,
             params,
-            animate
+            animate,
+            animationType
           });
         } else if (isPush) {
           navigationDispatch({
             type: NavigationActionType.PUSH,
             path,
             params,
-            animate
+            animate,
+            animationType
           });
         } else if (isStackPush) {
           navigationDispatch({
             type: NavigationActionType.STACK_PUSH,
             path,
             params,
-            animate
+            animate,
+            animationType
           });
         } else if (isReplace) {
           navigationDispatch({
             type: NavigationActionType.PUSH,
             path,
             params,
-            animate
+            animate,
+            animationType
           });
         }
       }

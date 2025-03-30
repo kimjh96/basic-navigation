@@ -4,12 +4,14 @@ import { compile, match } from "path-to-regexp";
 
 import ActivityContext from "@core/activity/ActivityContext";
 import { BaseActivity, BaseActivityParams } from "@core/activity/typing";
+import { AnimationType } from "@core/animation/typing";
 import HistoryContext from "@core/history/HistoryContext";
 import NavigationContext from "@core/navigation/NavigationContext";
 import { NavigationActionType, NavigationStatus } from "@core/navigation/typing";
 
 interface Options {
   animate?: boolean;
+  animationType?: AnimationType;
 }
 
 export default function useNavigation() {
@@ -23,7 +25,10 @@ export default function useNavigation() {
     push: <T extends BaseActivity["name"]>(
       name: T,
       params: BaseActivityParams[T] = {},
-      { animate }: Options = { animate: true }
+      { animate = true, animationType = "slide" }: Options = {
+        animate: true,
+        animationType: "slide"
+      }
     ) => {
       const nextActivity = state.activities.find((activity) => activity.name === name);
 
@@ -52,7 +57,8 @@ export default function useNavigation() {
           index: index + 1,
           status: NavigationStatus.PUSH,
           scrollTop: window.scrollContainer?.scrollTop || 0,
-          animate
+          animate,
+          animationType
         },
         "",
         nextPath
@@ -61,13 +67,17 @@ export default function useNavigation() {
         type: NavigationActionType.PUSH,
         path: nextPath,
         params: nextParams,
-        animate
+        animate,
+        animationType
       });
     },
     stackPush: <T extends BaseActivity["name"]>(
       _: T,
       params: Partial<BaseActivityParams[T]> = {},
-      { animate }: Options = { animate: true }
+      { animate = true, animationType = "slide" }: Options = {
+        animate: true,
+        animationType: "slide"
+      }
     ) => {
       const currentActivity = state.currentActivity;
 
@@ -99,7 +109,8 @@ export default function useNavigation() {
           index: index + 1,
           status: NavigationStatus.STACK_PUSH,
           scrollTop: window.scrollContainer?.scrollTop || 0,
-          animate
+          animate,
+          animationType
         },
         "",
         nextPath
@@ -108,13 +119,17 @@ export default function useNavigation() {
         type: NavigationActionType.STACK_PUSH,
         path: nextPath,
         params: nextParams as Record<string, string>,
-        animate
+        animate,
+        animationType
       });
     },
     replace: <T extends BaseActivity["name"]>(
       name: T,
       params: BaseActivityParams[T] = {},
-      { animate }: Options = { animate: true }
+      { animate = true, animationType = "slide" }: Options = {
+        animate: true,
+        animationType: "slide"
+      }
     ) => {
       const nextActivity = state.activities.find((activity) => activity.name === name);
 
@@ -143,7 +158,8 @@ export default function useNavigation() {
           index,
           status: NavigationStatus.REPLACE,
           scrollTop: window.scrollContainer?.scrollTop || 0,
-          animate
+          animate,
+          animationType
         },
         "",
         nextPath
@@ -152,7 +168,8 @@ export default function useNavigation() {
         type: NavigationActionType.REPLACE,
         path: nextPath,
         params: nextParams,
-        animate
+        animate,
+        animationType
       });
     },
     back: () => {

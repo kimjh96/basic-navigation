@@ -1,3 +1,5 @@
+import { AnimationType } from "@core/animation/typing";
+
 export interface History {
   index: number;
   records: HistoryRecord[];
@@ -8,6 +10,7 @@ export interface HistoryRecord {
   path: string;
   params: Record<string, string>;
   animate?: boolean;
+  animationType?: AnimationType;
 }
 
 export const enum HistoryActionType {
@@ -23,17 +26,20 @@ export type HistoryAction =
       path: string;
       params: Record<string, string>;
       animate?: boolean;
+      animationType?: AnimationType;
     }
   | {
       type: HistoryActionType.STACK_PUSH;
       path: string;
       params: Record<string, string>;
       animate?: boolean;
+      animationType?: AnimationType;
     }
   | {
       type: HistoryActionType.REPLACE;
       path: string;
       params: Record<string, string>;
       animate?: boolean;
+      animationType?: AnimationType;
     }
   | { type: HistoryActionType.BACK };

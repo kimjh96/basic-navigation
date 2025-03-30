@@ -95,13 +95,15 @@ function TransitionProvider({ children }: PropsWithChildren) {
             type: HistoryActionType.PUSH,
             path: event.path,
             params: event.params,
-            animate: event.animate
+            animate: event.animate,
+            animationType: event.animationType
           });
           activityDispatch({
             type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
             path: event.path,
             params: event.params,
-            animate: event.animate
+            animate: event.animate,
+            animationType: event.animationType
           });
 
           await createTransitionTimer(() => {
@@ -117,13 +119,15 @@ function TransitionProvider({ children }: PropsWithChildren) {
             type: HistoryActionType.STACK_PUSH,
             path: event.path,
             params: event.params,
-            animate: event.animate
+            animate: event.animate,
+            animationType: event.animationType
           });
           activityDispatch({
             type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
             path: event.path,
             params: event.params,
-            animate: event.animate
+            animate: event.animate,
+            animationType: event.animationType
           });
 
           await createTransitionTimer(() => {
@@ -139,16 +143,18 @@ function TransitionProvider({ children }: PropsWithChildren) {
             type: HistoryActionType.REPLACE,
             path: event.path,
             params: event.params,
-            animate: event.animate
+            animate: event.animate,
+            animationType: event.animationType
           });
           activityDispatch({
             type: ActivityActionType.UPDATE_CURRENT_ACTIVITY,
             path: event.path,
             params: event.params,
-            animate: event.animate
+            animate: event.animate,
+            animationType: event.animationType
           });
 
-          const { path, params, animate } =
+          const { path, params, animate, animationType } =
             recordsRef.current[recordsRef.current.length - 3] ||
             recordsRef.current[recordsRef.current.length - 2] ||
             recordsRef.current[recordsRef.current.length - 1];
@@ -157,7 +163,8 @@ function TransitionProvider({ children }: PropsWithChildren) {
             type: ActivityActionType.UPDATE_SPECIFY_PREVIOUS_ACTIVITY,
             path,
             params,
-            animate
+            animate,
+            animationType
           });
 
           await createTransitionTimer(() => {
@@ -168,7 +175,8 @@ function TransitionProvider({ children }: PropsWithChildren) {
               type: HistoryActionType.REPLACE,
               path: event.path,
               params: event.params,
-              animate: event.animate
+              animate: event.animate,
+              animationType: event.animationType
             });
           });
         } else if (event.status === NavigationStatus.BACK) {
@@ -185,7 +193,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
           }
 
           await createTransitionTimer(() => {
-            const { path, params, animate } =
+            const { path, params, animate, animationType } =
               recordsRef.current[recordsRef.current.length - 3] ||
               recordsRef.current[recordsRef.current.length - 2] ||
               lastRecord;
@@ -194,7 +202,8 @@ function TransitionProvider({ children }: PropsWithChildren) {
               type: ActivityActionType.UPDATE_PREVIOUS_ACTIVITY,
               path,
               params,
-              animate
+              animate,
+              animationType
             });
 
             navigationDispatch({

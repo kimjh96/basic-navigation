@@ -1,3 +1,5 @@
+import { AnimationType } from "@core/animation/typing";
+
 export interface BaseActivity {
   [key: string]: string;
 }
@@ -16,6 +18,7 @@ export interface Activity {
   params: BaseActivityParams[BaseActivity["name"]];
   activePath: string;
   animate?: boolean;
+  animationType?: AnimationType;
 }
 
 export const enum ActivityActionType {
@@ -39,18 +42,21 @@ export type ActivityAction =
       params: Record<string, string>;
       activity?: Activity;
       animate?: boolean;
+      animationType?: AnimationType;
     }
   | {
       type: ActivityActionType.UPDATE_PREVIOUS_ACTIVITY;
       path: string;
       params: Record<string, string>;
       animate?: boolean;
+      animationType?: AnimationType;
     }
   | {
       type: ActivityActionType.UPDATE_SPECIFY_PREVIOUS_ACTIVITY;
       path: string;
       params: Record<string, string>;
       animate?: boolean;
+      animationType?: AnimationType;
     }
   | {
       type: ActivityActionType.UPDATE_WAITING_ACTIVITY;

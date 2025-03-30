@@ -1,3 +1,5 @@
+import { AnimationType } from "@core/animation/typing";
+
 export interface Navigation {
   status: NavigationStatus;
   events: NavigationEvent[];
@@ -9,6 +11,7 @@ export interface NavigationEvent {
   params: Record<string, string>;
   recordedAt: number;
   animate?: boolean;
+  animationType?: AnimationType;
 }
 
 export const enum NavigationStatus {
@@ -51,24 +54,28 @@ export type NavigationAction =
       path: string;
       params: Record<string, string>;
       animate?: boolean;
+      animationType?: AnimationType;
     }
   | {
       type: NavigationActionType.STACK_PUSH;
       path: string;
       params: Record<string, string>;
       animate?: boolean;
+      animationType?: AnimationType;
     }
   | {
       type: NavigationActionType.REPLACE;
       path: string;
       params: Record<string, string>;
       animate?: boolean;
+      animationType?: AnimationType;
     }
   | {
       type: NavigationActionType.BACK;
       path: string;
       params: Record<string, string>;
       animate?: boolean;
+      animationType?: AnimationType;
     }
   | {
       type: NavigationActionType.BACK_START;

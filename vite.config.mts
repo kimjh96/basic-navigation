@@ -19,7 +19,9 @@ export default defineConfig({
         inputs
           .map((input) =>
             glob
-              .sync(`${input}/**/*.{ts,tsx}`)
+              .sync(`${input}/**/*.{ts,tsx}`, {
+                ignore: ["core/animation/typing.ts"]
+              })
               .map((file) => [
                 file.slice(0, file.length - extname(file).length),
                 fileURLToPath(new URL(file, import.meta.url))

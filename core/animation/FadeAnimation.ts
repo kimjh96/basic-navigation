@@ -1,0 +1,38 @@
+import { AnimationType, BaseAnimation } from "@core/animation/typing";
+
+class FadeAnimation implements BaseAnimation {
+  name: AnimationType = "fade";
+  enableBackdrop = false;
+
+  active = () => ({
+    transition: "opacity 0.3s",
+    opacity: "1"
+  });
+
+  inactive = () => ({
+    transition: "opacity 0.3s",
+    opacity: "0"
+  });
+
+  immediateActive = () => ({
+    transition: "none",
+    opacity: "1"
+  });
+
+  immediateInactive = () => ({
+    transition: "none",
+    opacity: "0"
+  });
+
+  activeProgress = (value: number) => ({
+    transition: "none",
+    opacity: `${1 - value}`
+  });
+
+  inactiveProgress = (value: number) => ({
+    transition: "none",
+    opacity: `${value}`
+  });
+}
+
+export default FadeAnimation;
