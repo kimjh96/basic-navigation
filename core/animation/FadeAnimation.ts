@@ -20,12 +20,12 @@ class FadeAnimation implements BaseAnimation {
   };
 
   active = () => ({
-    transition: "opacity 0.3s",
+    transition: "opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
     opacity: "1"
   });
 
   inactive = () => ({
-    transition: "opacity 0.3s",
+    transition: "opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
     opacity: "0"
   });
 

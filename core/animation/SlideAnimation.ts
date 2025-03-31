@@ -22,13 +22,13 @@ class SlideAnimation implements BaseAnimation {
   active = (status?: AnimationPreparationStatus) => {
     if (status === "ready-for-activation") {
       return {
-        transition: "transform 0.3s",
+        transition: "transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
         transform: "translate3d(-100px, 0, 0)"
       };
     }
 
     return {
-      transition: "transform 0.3s",
+      transition: "transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
       transform: "translate3d(0, 0, 0)"
     };
   };
@@ -36,20 +36,20 @@ class SlideAnimation implements BaseAnimation {
   inactive = (status?: AnimationPreparationStatus) => {
     if (status === "ready-for-activation") {
       return {
-        transition: "transform 0.3s",
+        transition: "transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
         transform: "translate3d(-100px, 0, 0)"
       };
     }
 
     if (status === "ready-for-deactivation") {
       return {
-        transition: "transform 0.3s",
+        transition: "transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
         transform: "translate3d(100%, 0, 0)"
       };
     }
 
     return {
-      transition: "transform 0.3s",
+      transition: "transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
       transform: "translate3d(0, 0, 0)"
     };
   };
