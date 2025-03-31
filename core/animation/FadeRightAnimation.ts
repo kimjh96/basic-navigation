@@ -120,7 +120,6 @@ class FadeRightAnimation implements BaseAnimation {
   inactiveProgress = (value: number) => {
     const slideProgress = Math.min(value * 20, 20);
     const opacityProgress = Math.max(0, (slideProgress - 2) / 18);
-
     return {
       transition: "none",
       opacity: `${opacityProgress}`,
