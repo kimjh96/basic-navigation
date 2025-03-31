@@ -1,4 +1,4 @@
-export type AnimationType = "slide" | "fade" | "breath";
+export type AnimationType = "slide" | "fade" | "breath" | "fade-right";
 export type AnimationPreparationStatus =
   | "ready-for-activation"
   | "ready-for-deactivation"

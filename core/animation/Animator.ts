@@ -4,6 +4,7 @@ import styleStringToObject from "@utils/styleStringToObject";
 
 import BreathAnimation from "@core/animation/BreathAnimation";
 import FadeAnimation from "@core/animation/FadeAnimation";
+import FadeRightAnimation from "@core/animation/FadeRightAnimation";
 import SlideAnimation from "@core/animation/SlideAnimation";
 import { AnimationPreparationStatus, AnimationType, BaseAnimation } from "@core/animation/typing";
 
@@ -14,6 +15,8 @@ class AnimationFactory {
         return new SlideAnimation();
       case "fade":
         return new FadeAnimation();
+      case "fade-right":
+        return new FadeRightAnimation();
       case "breath":
         return new BreathAnimation();
       default:
@@ -46,6 +49,8 @@ class Animator {
     switch (animationType) {
       case "fade":
         return FadeAnimation.getPreparationStyle(status);
+      case "fade-right":
+        return FadeRightAnimation.getPreparationStyle(status);
       case "breath":
         return BreathAnimation.getPreparationStyle(status);
       default:
