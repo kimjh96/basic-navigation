@@ -25,7 +25,7 @@ class FadeLeftAnimation implements BaseAnimation {
     if (status === "ready-for-activation") {
       return {
         transition:
-          "opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+          "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         opacity: "0",
         transform: "translate3d(20px, 0, 0)"
       };
@@ -33,7 +33,7 @@ class FadeLeftAnimation implements BaseAnimation {
 
     return {
       transition:
-        "opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
       opacity: "1",
       transform: "translate3d(0, 0, 0)"
     };
@@ -43,7 +43,7 @@ class FadeLeftAnimation implements BaseAnimation {
     if (status === "ready-for-activation") {
       return {
         transition:
-          "opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+          "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         opacity: "0",
         transform: "translate3d(20px, 0, 0)"
       };
@@ -52,7 +52,7 @@ class FadeLeftAnimation implements BaseAnimation {
     if (status === "ready-for-deactivation") {
       return {
         transition:
-          "opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+          "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         opacity: "0",
         transform: "translate3d(-20px, 0, 0)"
       };
@@ -60,7 +60,7 @@ class FadeLeftAnimation implements BaseAnimation {
 
     return {
       transition:
-        "opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
       opacity: "1",
       transform: "translate3d(0, 0, 0)"
     };

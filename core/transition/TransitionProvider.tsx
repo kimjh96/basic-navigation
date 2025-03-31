@@ -32,18 +32,12 @@ function TransitionProvider({ children }: PropsWithChildren) {
   const lastStatusRef = useRef(status);
   const recordsRef = useRef(records);
 
-  const createTransitionTimer = (callback: () => void, delay: number = 300) => {
+  const createTransitionTimer = (callback: () => Promise<void>, delay: number = 300) => {
     return new Promise<boolean>((resolve) => {
-      const timer = setTimeout(() => {
-        try {
-          callback();
-          resolve(true);
-        } catch {
-          resolve(false);
-        } finally {
-          transitionTimerRef.current.delete(timer);
-          pendingResolveRef.current = null;
-        }
+      const timer = setTimeout(async () => {
+        await callback();
+        transitionTimerRef.current.delete(timer);
+        pendingResolveRef.current = resolve;
       }, delay);
       transitionTimerRef.current.add(timer);
     });
@@ -118,7 +112,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
             animationType: event.animationType
           });
 
-          await createTransitionTimer(() => {
+          await createTransitionTimer(async () => {
             navigationDispatch({
               type: NavigationActionType.PUSH_DONE
             });
@@ -142,7 +136,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
             animationType: event.animationType
           });
 
-          await createTransitionTimer(() => {
+          await createTransitionTimer(async () => {
             navigationDispatch({
               type: NavigationActionType.STACK_PUSH_DONE
             });
@@ -180,7 +174,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
               animationType
             });
 
-            await createTransitionTimer(() => {
+            await createTransitionTimer(async () => {
               historyDispatch({
                 type: HistoryActionType.REPLACE,
                 path: event.path,
@@ -220,12 +214,10 @@ function TransitionProvider({ children }: PropsWithChildren) {
               animationType
             });
 
-            await createTransitionTimer(() => {
-              historyDispatch({ type: HistoryActionType.BACK });
-              navigationDispatch({
-                type: NavigationActionType.BACK_DONE
-              });
-            }, 10);
+            historyDispatch({ type: HistoryActionType.BACK });
+            navigationDispatch({
+              type: NavigationActionType.BACK_DONE
+            });
           });
         }
       } finally {

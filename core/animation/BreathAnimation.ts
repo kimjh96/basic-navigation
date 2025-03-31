@@ -23,14 +23,14 @@ class BreathAnimation implements BaseAnimation {
 
   active = () => ({
     transition:
-      "opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+      "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     opacity: "1",
     transform: "scale(1)"
   });
 
   inactive = () => ({
     transition:
-      "opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+      "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     opacity: "0",
     transform: "scale(0.985)"
   });
