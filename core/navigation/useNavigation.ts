@@ -71,7 +71,7 @@ export default function useNavigation() {
         animationType
       });
     },
-    stackPush: <T extends BaseActivity["name"]>(
+    pushRelative: <T extends BaseActivity["name"]>(
       _: T,
       params: Partial<BaseActivityParams[T]> = {},
       { animate = true, animationType = "slide" }: Options = {

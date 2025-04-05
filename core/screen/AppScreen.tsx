@@ -264,7 +264,7 @@ function AppScreen({
 
       const targetElement = e.target as HTMLElement;
 
-      if (targetElement.className === "activity-bar" || e.cancelable) {
+      if (targetElement.className === "screen-bar" || e.cancelable) {
         e.preventDefault();
       }
     };
@@ -363,7 +363,7 @@ function AppScreen({
   return (
     <>
       <div
-        className={"activity-bar"}
+        className={"screen-bar"}
         style={{
           position: "fixed",
           top: 0,
@@ -416,7 +416,7 @@ function AppScreen({
           marginTop: appBarHeight,
           marginBottom: bottomNavigationBarHeight,
           width: "100%",
-          height: "100%",
+          height: `calc(100% - ${appBarHeight}px - ${bottomNavigationBarHeight}px)`,
           overflow: "auto",
           overscrollBehavior: "none",
           backgroundColor,

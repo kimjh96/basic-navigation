@@ -17,12 +17,7 @@ export interface RouteProps<T extends BaseActivity["name"] = BaseActivity["name"
   activity: ReactNode;
 }
 
-function Route<T extends BaseActivity["name"]>({
-  name,
-  path,
-  activePath,
-  activity
-}: RouteProps<T>) {
+function Route<T extends BaseActivity["name"]>({ name, activePath, activity }: RouteProps<T>) {
   const {
     state: { currentActivity, previousActivity }
   } = useContext(ActivityContext);
@@ -53,7 +48,6 @@ function Route<T extends BaseActivity["name"]>({
   return (
     <div
       ref={ref}
-      data-path={path}
       data-active-path={activePath}
       style={{
         display: isFrozen ? "none" : undefined,
