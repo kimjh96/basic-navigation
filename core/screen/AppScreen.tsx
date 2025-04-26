@@ -117,7 +117,7 @@ function AppScreen({
     }
   }, [currentActivity?.animationType]);
 
-  // 액티비티가 활성화된 경우
+  // 현재 화면이 활성화되었을 때 실행되는 로직
   useEffect(() => {
     const activePath =
       animatorRef?.current?.currentActivityElement?.parentElement?.getAttribute("data-active-path");
@@ -145,7 +145,7 @@ function AppScreen({
     }
   }, [currentActivity?.activePath, currentActivity?.animate, currentActivity?.animationType]);
 
-  // 이전 액티비티가 활성화된 경우
+  // 이전 화면이 다시 현재 화면으로 복원될 때 실행되는 로직
   useEffect(() => {
     const activePath =
       animatorRef?.current?.currentActivityElement?.parentElement?.getAttribute("data-active-path");
@@ -163,7 +163,7 @@ function AppScreen({
     }
   }, [previousActivity?.activePath, previousActivity?.animate, previousActivity?.animationType]);
 
-  // 이전 액티비티 상태로 변경된 경우
+  // 현재 화면이 백그라운드로 이동하고 이전 화면이 활성화될 때 실행되는 로직
   useEffect(() => {
     const activePath =
       animatorRef?.current?.currentActivityElement?.parentElement?.getAttribute("data-active-path");
@@ -232,7 +232,7 @@ function AppScreen({
       if (notYet) {
         animatorRef.current?.deactivatePreviousActivityElement();
         animatorRef.current?.activateCurrentActivityElement();
-        currentClientXRef.current = 1; // 클릭 이벤트 전파 방지
+        currentClientXRef.current = 1; // 사용자 제스처를 무시하고 클릭 이벤트가 전파되는 것을 방지
 
         isTransitioningRef.current = false;
 
