@@ -12,7 +12,7 @@ import getParams from "@utils/getParams";
 import isServer from "@utils/isServer";
 
 import ActivityContext from "@core/activity/ActivityContext";
-import { activityReducer } from "@core/activity/store";
+import activityReducer from "@core/activity/reducer";
 
 interface ActivityProviderProps extends Pick<RouterProps, "initPath"> {
   navigates: ReactElement<RouteProps> | ReactElement<RouteProps>[];

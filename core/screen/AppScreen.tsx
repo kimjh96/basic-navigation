@@ -10,8 +10,8 @@ import {
 } from "react";
 
 import ActivityContext from "@core/activity/ActivityContext";
-import Animator from "@core/animation/Animator";
-import { AnimationType } from "@core/animation/typing";
+import Animator from "@core/animator/Animator";
+import { AnimationType } from "@core/animator/typing";
 import NavigationContext from "@core/navigation/NavigationContext";
 import { NavigationStatus } from "@core/navigation/typing";
 import TransitionContext from "@core/transition/TransitionContext";
@@ -35,41 +35,39 @@ function AppScreen({
   backgroundColor = "white"
 }: PropsWithChildren<AppScreenProps>) {
   const {
-    state: { currentActivity, previousActivity, waitingActivity }
+    state: { currentActivity, previousActivity, preparingActivity }
   } = useContext(ActivityContext);
   const { dispatch } = useContext(TransitionContext);
   const {
     state: { status }
   } = useContext(NavigationContext);
 
-  const [transitionPreparationStyle, setTransitionPreparationStyle] = useState(() => {
+  const [preparationStyle, setPreparationStyle] = useState(() => {
     const animationStatus = [NavigationStatus.READY, NavigationStatus.REPLACE_DONE].includes(status)
-      ? "ready-to-activate"
-      : "ready-to-deactivate";
+      ? "active-initial"
+      : "inactive-initial";
 
     return {
-      style: Animator.getTransitionPreparationStyle(
-        animationStatus,
-        currentActivity?.animationType
-      ),
+      style: Animator.getPreparationStyle(animationStatus, currentActivity?.animationType),
       status: animationStatus
     };
   });
-  const [enableBackdrop, setEnableBackdrop] = useState(false);
 
   const ref = useRef<HTMLDivElement>(null);
-  const isTransitioningRef = useRef(false);
+  const isSwipingRef = useRef(false);
   const isScrollingRef = useRef(false);
   const startClientXRef = useRef(0);
   const startClientYRef = useRef(0);
   const startScrollTopRef = useRef(0);
   const currentClientXRef = useRef(0);
-  const isTransitionEndRef = useRef(true);
-  const transitionEndTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
+  const isSwipeEndRef = useRef(true);
+  const swipeEndTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
   const animatorRef = useRef<Animator>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
+  const currentActivePathRef = useRef("");
+  const previousActivePathRef = useRef("");
 
-  const startTransition = ({
+  const startSwipe = ({
     clientX,
     clientY,
     scrollTop
@@ -84,20 +82,20 @@ function AppScreen({
     startClientXRef.current = clientX;
     startClientYRef.current = clientY;
     startScrollTopRef.current = scrollTop;
-    isTransitioningRef.current = true;
+    isSwipingRef.current = true;
 
-    animatorRef.current?.deactivatePreviousActivityElement(false, "ready-for-activation");
+    animatorRef.current?.hidePrevious(false, "preparing-active");
   };
 
   const handleMouseDown = (e: MouseEvent<HTMLDivElement>) =>
-    startTransition({
+    startSwipe({
       clientX: e.clientX,
       clientY: e.clientY,
       scrollTop: e.currentTarget.scrollTop
     });
 
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) =>
-    startTransition({
+    startSwipe({
       clientX: e.touches[0].clientX,
       clientY: e.touches[0].clientY,
       scrollTop: e.currentTarget.scrollTop
@@ -110,109 +108,108 @@ function AppScreen({
   useEffect(() => {
     if (ref.current) {
       animatorRef.current = new Animator(
-        () => ref.current?.parentElement?.previousElementSibling as HTMLElement,
+        () => ref.current?.parentElement?.previousElementSibling as HTMLDivElement,
         () => ref.current || undefined,
         currentActivity?.animationType as AnimationType
       );
+      currentActivePathRef.current =
+        animatorRef?.current?.current?.parentElement?.getAttribute("data-active-path") || "";
+      previousActivePathRef.current =
+        animatorRef?.current?.previous?.getAttribute("data-active-path") || "";
     }
   }, [currentActivity?.animationType]);
 
   // 현재 화면이 활성화되었을 때 실행되는 로직
   useEffect(() => {
-    const activePath =
-      animatorRef?.current?.currentActivityElement?.parentElement?.getAttribute("data-active-path");
-    const previousActivePath = animatorRef?.current?.previousActivityElement;
-
     if (
-      activePath === currentActivity?.activePath &&
-      previousActivePath !== currentActivity?.activePath
+      currentActivePathRef.current === currentActivity?.activePath &&
+      previousActivePathRef.current !== currentActivity?.activePath
     ) {
-      animatorRef.current?.restoreCurrentActivityElementScroll();
-      animatorRef.current?.deactivatePreviousActivityElement(
-        currentActivity?.animate,
-        "ready-for-activation"
-      );
-      animatorRef.current?.activateCurrentActivityElement(currentActivity?.animate);
+      animatorRef.current?.restoreScroll();
+      animatorRef.current?.hidePrevious(currentActivity?.animate, "preparing-active");
+      animatorRef.current?.showCurrent(currentActivity?.animate);
 
-      setTransitionPreparationStyle({
-        style: Animator.getTransitionPreparationStyle(
-          "ready-to-activate",
-          currentActivity?.animationType
-        ),
-        status: "ready-to-activate"
+      if (animatorRef.current?.animation?.enableBackdrop) {
+        if (backdropRef.current) {
+          backdropRef.current.style.transition = "opacity 0.3s";
+          backdropRef.current.style.opacity = "1";
+        }
+      }
+
+      setPreparationStyle({
+        style: Animator.getPreparationStyle("active-initial", currentActivity?.animationType),
+        status: "active-initial"
       });
-      setEnableBackdrop(!!animatorRef.current?.animation?.enableBackdrop);
     }
   }, [currentActivity?.activePath, currentActivity?.animate, currentActivity?.animationType]);
 
-  // 이전 화면이 다시 현재 화면으로 복원될 때 실행되는 로직
+  // 이전 화면이 다시 현재 화면으로 활성화될 때 실행되는 로직
   useEffect(() => {
-    const activePath =
-      animatorRef?.current?.currentActivityElement?.parentElement?.getAttribute("data-active-path");
+    if (currentActivePathRef.current === previousActivity?.activePath) {
+      animatorRef.current?.showPrevious(previousActivity?.animate);
 
-    if (activePath === previousActivity?.activePath) {
-      animatorRef.current?.activatePreviousActivityElement(previousActivity?.animate);
+      if (animatorRef.current?.animation?.enableBackdrop) {
+        if (backdropRef.current) {
+          backdropRef.current.style.transition = "opacity 0.3s";
+          backdropRef.current.style.opacity = "1";
+        }
+      }
 
-      setTransitionPreparationStyle({
-        style: Animator.getTransitionPreparationStyle(
-          "ready-to-activate",
-          previousActivity?.animationType
-        ),
-        status: "ready-to-activate"
+      setPreparationStyle({
+        style: Animator.getPreparationStyle("active-initial", previousActivity?.animationType),
+        status: "active-initial"
       });
     }
   }, [previousActivity?.activePath, previousActivity?.animate, previousActivity?.animationType]);
 
-  // 현재 화면이 백그라운드로 이동하고 이전 화면이 활성화될 때 실행되는 로직
+  // 현재 화면이 비활성화 되고 이전 화면이 활성화될 때 실행되는 로직
   useEffect(() => {
-    const activePath =
-      animatorRef?.current?.currentActivityElement?.parentElement?.getAttribute("data-active-path");
-
     if (
-      activePath === waitingActivity?.activePath &&
-      transitionPreparationStyle.status === "ready-to-activate"
+      currentActivePathRef.current === preparingActivity?.activePath &&
+      preparationStyle.status === "active-initial"
     ) {
-      animatorRef.current?.activatePreviousActivityElement(waitingActivity?.animate);
-      animatorRef.current?.deactivateCurrentActivityElement(
-        waitingActivity?.animate,
-        "ready-for-deactivation"
-      );
+      animatorRef.current?.showPrevious(preparingActivity?.animate);
+      animatorRef.current?.hideCurrent(preparingActivity?.animate, "preparing-inactive");
 
-      setTransitionPreparationStyle({
-        style: Animator.getTransitionPreparationStyle(
-          "ready-to-deactivate",
-          waitingActivity?.animationType
-        ),
-        status: "ready-to-deactivate"
+      if (animatorRef.current?.animation?.enableBackdrop) {
+        if (backdropRef.current) {
+          backdropRef.current.style.transition = "opacity 0.3s";
+          backdropRef.current.style.opacity = "0";
+        }
+      }
+
+      setPreparationStyle({
+        style: Animator.getPreparationStyle("inactive-initial", preparingActivity?.animationType),
+        status: "inactive-initial"
       });
     }
   }, [
-    waitingActivity?.activePath,
-    waitingActivity?.animate,
-    waitingActivity?.animationType,
-    transitionPreparationStyle.status
+    preparingActivity?.activePath,
+    preparingActivity?.animate,
+    preparingActivity?.animationType,
+    preparationStyle.status
   ]);
 
   useEffect(() => {
-    const currentActivityElement = ref.current;
+    const currentScreenElement = ref.current;
 
     const handleScroll = () => {
       isScrollingRef.current = true;
     };
 
-    currentActivityElement?.addEventListener("scroll", handleScroll);
-    currentActivityElement?.addEventListener("scroll", handleScrollEnd);
+    currentScreenElement?.addEventListener("scroll", handleScroll);
+    currentScreenElement?.addEventListener("scroll", handleScrollEnd);
 
     return () => {
-      currentActivityElement?.removeEventListener("scroll", handleScroll);
-      currentActivityElement?.removeEventListener("scroll", handleScrollEnd);
+      currentScreenElement?.removeEventListener("scroll", handleScroll);
+      currentScreenElement?.removeEventListener("scroll", handleScrollEnd);
     };
   }, [handleScrollEnd]);
 
   useEffect(() => {
-    const currentActivityElement = ref.current;
+    const currentScreenElement = ref.current;
 
-    const transitioning = ({
+    const swipe = ({
       e,
       clientX,
       clientY
@@ -221,7 +218,7 @@ function AppScreen({
       clientX: number;
       clientY: number;
     }) => {
-      if (!isTransitioningRef.current || isScrollingRef.current) return;
+      if (!isSwipingRef.current || isScrollingRef.current) return;
 
       currentClientXRef.current = clientX - startClientXRef.current;
 
@@ -230,11 +227,11 @@ function AppScreen({
       const notYet = deltaY > deltaX || currentClientXRef.current < 0;
 
       if (notYet) {
-        animatorRef.current?.deactivatePreviousActivityElement();
-        animatorRef.current?.activateCurrentActivityElement();
+        animatorRef.current?.hidePrevious();
+        animatorRef.current?.showCurrent();
         currentClientXRef.current = 1; // 사용자 제스처를 무시하고 클릭 이벤트가 전파되는 것을 방지
 
-        isTransitioningRef.current = false;
+        isSwipingRef.current = false;
 
         dispatch({
           type: TransitionActionType.DONE
@@ -256,11 +253,8 @@ function AppScreen({
         type: TransitionActionType.PENDING
       });
 
-      animatorRef.current?.updatePreviousActivityElementProgress(clampedProgress);
-      animatorRef.current?.updateCurrentActivityElementProgress(
-        clampedProgress,
-        currentClientXRef.current
-      );
+      animatorRef.current?.updatePreviousProgress(clampedProgress);
+      animatorRef.current?.updateCurrentProgress(clampedProgress, currentClientXRef.current);
 
       const targetElement = e.target as HTMLElement;
 
@@ -270,93 +264,85 @@ function AppScreen({
     };
 
     const handleMouseMove = (e: globalThis.MouseEvent) =>
-      transitioning({
+      swipe({
         e,
         clientX: e.clientX,
         clientY: e.clientY
       });
 
     const handleTouchMove = (e: globalThis.TouchEvent) =>
-      transitioning({
+      swipe({
         e,
         clientX: e.touches[0].clientX,
         clientY: e.touches[0].clientY
       });
 
-    currentActivityElement?.addEventListener("mousemove", handleMouseMove);
-    currentActivityElement?.addEventListener("touchmove", handleTouchMove);
+    currentScreenElement?.addEventListener("mousemove", handleMouseMove);
+    currentScreenElement?.addEventListener("touchmove", handleTouchMove);
 
     return () => {
-      currentActivityElement?.removeEventListener("mousemove", handleMouseMove);
-      currentActivityElement?.removeEventListener("touchmove", handleTouchMove);
+      currentScreenElement?.removeEventListener("mousemove", handleMouseMove);
+      currentScreenElement?.removeEventListener("touchmove", handleTouchMove);
     };
   }, [dispatch]);
 
   useEffect(() => {
-    const endTransition = () => {
-      if (!currentActivity?.animate || transitionPreparationStyle.status === "ready-to-deactivate")
-        return;
+    const endSwipe = () => {
+      if (!currentActivity?.animate || preparationStyle.status === "inactive-initial") return;
 
-      isTransitioningRef.current = false;
-      isTransitionEndRef.current = false;
-
-      if (animatorRef.current?.animation?.enableBackdrop) {
-        if (backdropRef.current) {
-          backdropRef.current.style.transition = "opacity 0.3s";
-          backdropRef.current.style.opacity = "1";
-        }
-      }
+      isSwipingRef.current = false;
+      isSwipeEndRef.current = false;
 
       const isTriggered = currentClientXRef.current >= 30;
 
       if (isTriggered) {
-        animatorRef.current?.activatePreviousActivityElement();
-        animatorRef.current?.deactivateCurrentActivityElement();
+        animatorRef.current?.showPrevious();
+        animatorRef.current?.hideCurrent();
 
         window.history.back();
       } else {
-        animatorRef.current?.deactivatePreviousActivityElement(true, "ready-for-activation");
-        animatorRef.current?.activateCurrentActivityElement();
+        animatorRef.current?.hidePrevious(true, "preparing-active");
+        animatorRef.current?.showCurrent();
       }
 
-      if (transitionEndTimerRef.current) {
-        clearTimeout(transitionEndTimerRef.current);
+      if (swipeEndTimerRef.current) {
+        clearTimeout(swipeEndTimerRef.current);
       }
 
-      transitionEndTimerRef.current = setTimeout(() => {
-        isTransitionEndRef.current = true;
+      swipeEndTimerRef.current = setTimeout(() => {
+        isSwipeEndRef.current = true;
         dispatch({
           type: TransitionActionType.DONE
         });
       }, 50);
     };
 
-    const handleMouseUp = () => endTransition();
+    const handleMouseUp = () => endSwipe();
 
-    const handleTouchEnd = () => endTransition();
+    const handleTouchEnd = () => endSwipe();
 
-    animatorRef?.current?.currentActivityElement?.addEventListener("mouseup", handleMouseUp);
-    animatorRef?.current?.currentActivityElement?.addEventListener("touchend", handleTouchEnd);
+    animatorRef?.current?.current?.addEventListener("mouseup", handleMouseUp);
+    animatorRef?.current?.current?.addEventListener("touchend", handleTouchEnd);
 
     return () => {
-      animatorRef?.current?.currentActivityElement?.removeEventListener("mouseup", handleMouseUp);
-      animatorRef?.current?.currentActivityElement?.removeEventListener("touchend", handleTouchEnd);
+      animatorRef?.current?.current?.removeEventListener("mouseup", handleMouseUp);
+      animatorRef?.current?.current?.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [currentActivity?.animate, dispatch, transitionPreparationStyle.status]);
+  }, [currentActivity?.animate, dispatch, preparationStyle.status]);
 
   useEffect(() => {
-    const currentActivityElement = ref.current;
+    const currentScreenElement = ref.current;
 
     const handleClick = (e: globalThis.MouseEvent) => {
-      if (!isTransitionEndRef.current && currentClientXRef.current >= 1) {
+      if (!isSwipeEndRef.current && currentClientXRef.current >= 1) {
         e.stopPropagation();
       }
     };
 
-    currentActivityElement?.addEventListener("click", handleClick);
+    currentScreenElement?.addEventListener("click", handleClick);
 
     return () => {
-      currentActivityElement?.removeEventListener("click", handleClick);
+      currentScreenElement?.removeEventListener("click", handleClick);
     };
   }, []);
 
@@ -383,12 +369,7 @@ function AppScreen({
           height: "100%",
           backgroundColor: "rgba(0, 0, 0, 0.3)",
           transition: "opacity 0.3s",
-          opacity:
-            currentActivity?.animate &&
-            transitionPreparationStyle.status === "ready-to-activate" &&
-            enableBackdrop
-              ? 1
-              : 0,
+          opacity: 0,
           pointerEvents: "none",
           zIndex: 0
         }}
@@ -420,7 +401,7 @@ function AppScreen({
           overflow: "auto",
           overscrollBehavior: "none",
           backgroundColor,
-          ...transitionPreparationStyle.style
+          ...preparationStyle.style
         }}
       >
         {children}

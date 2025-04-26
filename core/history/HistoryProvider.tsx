@@ -7,7 +7,7 @@ import isServer from "@utils/isServer";
 
 import ActivityContext from "@core/activity/ActivityContext";
 import HistoryContext from "@core/history/HistoryContext";
-import { historyReducer } from "@core/history/store";
+import historyReducer from "@core/history/reducer";
 import { HistoryActionType } from "@core/history/typing";
 import NavigationContext from "@core/navigation/NavigationContext";
 import { NavigationActionType, NavigationStatus } from "@core/navigation/typing";

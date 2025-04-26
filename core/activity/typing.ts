@@ -1,4 +1,4 @@
-import { AnimationType } from "@core/animation/typing";
+import { AnimationType } from "@core/animator/typing";
 
 export interface BaseActivity {
   [key: string]: string;
@@ -25,14 +25,14 @@ export const enum ActivityActionType {
   UPDATE_CURRENT_ACTIVITY = "UPDATE_CURRENT_ACTIVITY",
   UPDATE_PREVIOUS_ACTIVITY = "UPDATE_PREVIOUS_ACTIVITY",
   UPDATE_SPECIFY_PREVIOUS_ACTIVITY = "UPDATE_SPECIFY_PREVIOUS_ACTIVITY",
-  UPDATE_WAITING_ACTIVITY = "UPDATE_WAITING_ACTIVITY"
+  UPDATE_PREPARING_ACTIVITY = "UPDATE_PREPARING_ACTIVITY"
 }
 
 export interface ActivityState {
   activities: Activity[];
   previousActivity?: Activity;
   currentActivity?: Activity;
-  waitingActivity?: Activity;
+  preparingActivity?: Activity;
 }
 
 export type ActivityAction =
@@ -59,5 +59,5 @@ export type ActivityAction =
       animationType?: AnimationType;
     }
   | {
-      type: ActivityActionType.UPDATE_WAITING_ACTIVITY;
+      type: ActivityActionType.UPDATE_PREPARING_ACTIVITY;
     };

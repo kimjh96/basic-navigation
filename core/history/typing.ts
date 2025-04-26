@@ -1,4 +1,4 @@
-import { AnimationType } from "@core/animation/typing";
+import { AnimationType } from "@core/animator/typing";
 
 export interface History {
   index: number;

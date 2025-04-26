@@ -1,7 +1,7 @@
 import { PropsWithChildren, useReducer } from "react";
 
 import NavigationContext from "@core/navigation/NavigationContext";
-import { navigationReducer } from "@core/navigation/store";
+import navigationReducer from "@core/navigation/reducer";
 import { NavigationStatus } from "@core/navigation/typing";
 
 function NavigationProvider({ children }: PropsWithChildren) {

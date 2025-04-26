@@ -1,6 +1,6 @@
 import { History, HistoryAction, HistoryActionType } from "@core/history/typing";
 
-export function historyReducer(state: History, action: HistoryAction): History {
+export default function historyReducer(state: History, action: HistoryAction): History {
   switch (action.type) {
     case HistoryActionType.PUSH:
       return {

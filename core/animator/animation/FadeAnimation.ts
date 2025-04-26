@@ -1,16 +1,16 @@
-import { AnimationPreparationStatus, AnimationType, BaseAnimation } from "@core/animation/typing";
+import { AnimationState, AnimationType, BaseAnimation } from "@core/animator/typing";
 
 class FadeAnimation implements BaseAnimation {
   name: AnimationType = "fade";
   enableBackdrop = false;
 
-  static getPreparationStyle = (status: AnimationPreparationStatus) => {
-    switch (status) {
-      case "ready-to-activate":
+  static getPreparationStyle = (state: AnimationState) => {
+    switch (state) {
+      case "active-initial":
         return {
           opacity: "1"
         };
-      case "ready-to-deactivate":
+      case "inactive-initial":
         return {
           opacity: "0"
         };

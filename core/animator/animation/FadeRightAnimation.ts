@@ -1,17 +1,17 @@
-import { AnimationPreparationStatus, AnimationType, BaseAnimation } from "@core/animation/typing";
+import { AnimationState, AnimationType, BaseAnimation } from "@core/animator/typing";
 
 class FadeRightAnimation implements BaseAnimation {
   name: AnimationType = "fade-right";
   enableBackdrop = false;
 
-  static getPreparationStyle = (status: AnimationPreparationStatus) => {
-    switch (status) {
-      case "ready-to-activate":
+  static getPreparationStyle = (state: AnimationState) => {
+    switch (state) {
+      case "active-initial":
         return {
           opacity: "1",
           transform: "translate3d(0, 0, 0)"
         };
-      case "ready-to-deactivate":
+      case "inactive-initial":
         return {
           opacity: "0",
           transform: "translate3d(20px, 0, 0)"
@@ -21,8 +21,8 @@ class FadeRightAnimation implements BaseAnimation {
     }
   };
 
-  active = (status?: AnimationPreparationStatus) => {
-    if (status === "ready-for-activation") {
+  active = (state?: AnimationState) => {
+    if (state === "preparing-active") {
       return {
         transition:
           "opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -39,8 +39,8 @@ class FadeRightAnimation implements BaseAnimation {
     };
   };
 
-  inactive = (status?: AnimationPreparationStatus) => {
-    if (status === "ready-for-activation") {
+  inactive = (state?: AnimationState) => {
+    if (state === "preparing-active") {
       return {
         transition:
           "opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -49,7 +49,7 @@ class FadeRightAnimation implements BaseAnimation {
       };
     }
 
-    if (status === "ready-for-deactivation") {
+    if (state === "preparing-inactive") {
       return {
         transition:
           "opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -66,8 +66,8 @@ class FadeRightAnimation implements BaseAnimation {
     };
   };
 
-  immediateActive = (status?: AnimationPreparationStatus) => {
-    if (status === "ready-for-activation") {
+  immediateActive = (state?: AnimationState) => {
+    if (state === "preparing-active") {
       return {
         transition: "none",
         opacity: "0",
@@ -82,8 +82,8 @@ class FadeRightAnimation implements BaseAnimation {
     };
   };
 
-  immediateInactive = (status?: AnimationPreparationStatus) => {
-    if (status === "ready-for-activation") {
+  immediateInactive = (state?: AnimationState) => {
+    if (state === "preparing-active") {
       return {
         transition: "none",
         opacity: "0",
@@ -91,7 +91,7 @@ class FadeRightAnimation implements BaseAnimation {
       };
     }
 
-    if (status === "ready-for-deactivation") {
+    if (state === "preparing-inactive") {
       return {
         transition: "none",
         opacity: "0",

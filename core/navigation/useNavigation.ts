@@ -4,7 +4,7 @@ import { compile, match } from "path-to-regexp";
 
 import ActivityContext from "@core/activity/ActivityContext";
 import { BaseActivity, BaseActivityParams } from "@core/activity/typing";
-import { AnimationType } from "@core/animation/typing";
+import { AnimationType } from "@core/animator/typing";
 import HistoryContext from "@core/history/HistoryContext";
 import NavigationContext from "@core/navigation/NavigationContext";
 import { NavigationActionType, NavigationStatus } from "@core/navigation/typing";

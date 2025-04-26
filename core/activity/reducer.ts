@@ -2,7 +2,10 @@ import { pathToRegexp } from "path-to-regexp";
 
 import { ActivityAction, ActivityActionType, ActivityState } from "@core/activity/typing";
 
-export function activityReducer(state: ActivityState, action: ActivityAction): ActivityState {
+export default function activityReducer(
+  state: ActivityState,
+  action: ActivityAction
+): ActivityState {
   switch (action.type) {
     case ActivityActionType.UPDATE_CURRENT_ACTIVITY: {
       const [currentActivity] = state.activities
@@ -67,12 +70,12 @@ export function activityReducer(state: ActivityState, action: ActivityAction): A
         currentActivity: state.currentActivity
       };
     }
-    case ActivityActionType.UPDATE_WAITING_ACTIVITY:
+    case ActivityActionType.UPDATE_PREPARING_ACTIVITY:
       return {
         activities: state.activities,
         previousActivity: state.previousActivity,
         currentActivity: state.currentActivity,
-        waitingActivity: state.currentActivity
+        preparingActivity: state.currentActivity
       };
     default:
       return state;

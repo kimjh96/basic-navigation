@@ -6,7 +6,7 @@ import HistoryContext from "@core/history/HistoryContext";
 import { HistoryActionType } from "@core/history/typing";
 import NavigationContext from "@core/navigation/NavigationContext";
 import { NavigationActionType, NavigationEvent, NavigationStatus } from "@core/navigation/typing";
-import { transitionReducer } from "@core/transition/store";
+import transitionReducer from "@core/transition/reducer";
 import TransitionContext from "@core/transition/TransitionContext";
 import { TransitionStatus } from "@core/transition/typing";
 
@@ -161,10 +161,10 @@ function TransitionProvider({ children }: PropsWithChildren) {
           });
 
           await createTransitionTimer(async () => {
+            const records = recordsRef.current;
+            const index = Math.max(0, records.length - 3);
             const { path, params, animate, animationType } =
-              recordsRef.current[recordsRef.current.length - 3] ||
-              recordsRef.current[recordsRef.current.length - 2] ||
-              recordsRef.current[recordsRef.current.length - 1];
+              records.slice(index).find(Boolean) || records[records.length - 1];
 
             activityDispatch({
               type: ActivityActionType.UPDATE_SPECIFY_PREVIOUS_ACTIVITY,
@@ -196,15 +196,15 @@ function TransitionProvider({ children }: PropsWithChildren) {
 
           if (lastRecord.type !== HistoryActionType.STACK_PUSH) {
             activityDispatch({
-              type: ActivityActionType.UPDATE_WAITING_ACTIVITY
+              type: ActivityActionType.UPDATE_PREPARING_ACTIVITY
             });
           }
 
           await createTransitionTimer(async () => {
+            const records = recordsRef.current;
+            const index = Math.max(0, records.length - 3);
             const { path, params, animate, animationType } =
-              recordsRef.current[recordsRef.current.length - 3] ||
-              recordsRef.current[recordsRef.current.length - 2] ||
-              lastRecord;
+              records.slice(index).find(Boolean) || lastRecord;
 
             activityDispatch({
               type: ActivityActionType.UPDATE_PREVIOUS_ACTIVITY,

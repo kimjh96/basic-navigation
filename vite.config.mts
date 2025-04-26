@@ -20,7 +20,7 @@ export default defineConfig({
           .map((input) =>
             glob
               .sync(`${input}/**/*.{ts,tsx}`, {
-                ignore: ["core/animation/typing.ts"]
+                ignore: ["core/animator/typing.ts"]
               })
               .map((file) => [
                 file.slice(0, file.length - extname(file).length),

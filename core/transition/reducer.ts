@@ -5,7 +5,7 @@ import {
   TransitionStatus
 } from "@core/transition/typing";
 
-export function transitionReducer(state: Transition, action: TransitionAction): Transition {
+export default function transitionReducer(state: Transition, action: TransitionAction): Transition {
   switch (action.type) {
     case TransitionActionType.PENDING:
       return {

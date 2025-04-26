@@ -1,16 +1,16 @@
-import { AnimationType, BaseAnimation, AnimationPreparationStatus } from "@core/animation/typing";
+import { AnimationType, BaseAnimation, AnimationState } from "@core/animator/typing";
 
 class SlideAnimation implements BaseAnimation {
   name: AnimationType = "slide";
   enableBackdrop = true;
 
-  static getPreparationStyle = (status: AnimationPreparationStatus) => {
-    switch (status) {
-      case "ready-to-activate":
+  static getPreparationStyle = (state: AnimationState) => {
+    switch (state) {
+      case "active-initial":
         return {
           transform: "translate3d(0, 0, 0)"
         };
-      case "ready-to-deactivate":
+      case "inactive-initial":
         return {
           transform: "translate3d(100%, 0, 0)"
         };
@@ -19,8 +19,8 @@ class SlideAnimation implements BaseAnimation {
     }
   };
 
-  active = (status?: AnimationPreparationStatus) => {
-    if (status === "ready-for-activation") {
+  active = (state?: AnimationState) => {
+    if (state === "preparing-active") {
       return {
         transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         transform: "translate3d(-100px, 0, 0)"
@@ -33,15 +33,15 @@ class SlideAnimation implements BaseAnimation {
     };
   };
 
-  inactive = (status?: AnimationPreparationStatus) => {
-    if (status === "ready-for-activation") {
+  inactive = (state?: AnimationState) => {
+    if (state === "preparing-active") {
       return {
         transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         transform: "translate3d(-100px, 0, 0)"
       };
     }
 
-    if (status === "ready-for-deactivation") {
+    if (state === "preparing-inactive") {
       return {
         transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         transform: "translate3d(100%, 0, 0)"
@@ -54,8 +54,8 @@ class SlideAnimation implements BaseAnimation {
     };
   };
 
-  immediateActive = (status?: AnimationPreparationStatus) => {
-    if (status === "ready-for-activation") {
+  immediateActive = (state?: AnimationState) => {
+    if (state === "preparing-active") {
       return {
         transition: "none",
         transform: "translate3d(-100px, 0, 0)"
@@ -68,15 +68,15 @@ class SlideAnimation implements BaseAnimation {
     };
   };
 
-  immediateInactive = (status?: AnimationPreparationStatus) => {
-    if (status === "ready-for-activation") {
+  immediateInactive = (state?: AnimationState) => {
+    if (state === "preparing-active") {
       return {
         transition: "none",
         transform: "translate3d(-100px, 0, 0)"
       };
     }
 
-    if (status === "ready-for-deactivation") {
+    if (state === "preparing-inactive") {
       return {
         transition: "none",
         transform: "translate3d(100%, 0, 0)"

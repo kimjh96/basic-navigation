@@ -5,7 +5,7 @@ import {
   NavigationStatus
 } from "@core/navigation/typing";
 
-export function navigationReducer(state: Navigation, action: NavigationAction): Navigation {
+export default function navigationReducer(state: Navigation, action: NavigationAction): Navigation {
   switch (action.type) {
     case NavigationActionType.PUSH:
       return {
