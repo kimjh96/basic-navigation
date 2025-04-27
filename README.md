@@ -134,22 +134,25 @@ function Home() {
 
   const handleClick = () => {
     // 새로운 화면으로 이동
-    navigation.push('/about');
+    navigation.push('ProductActivity');
     
     // 애니메이션 없이 이동
-    navigation.push('/about', { animate: false });
+    navigation.push('ProductActivity', { animate: false });
     
     // 특정 애니메이션으로 이동
-    navigation.push('/about', { 
+    navigation.push('ProductActivity', { 
       animate: true,
       animationType: 'slide' // 'slide', 'fade', 'fade-left', 'fade-right', 'breath'
     });
+
+    // 현재 화면에서 파라미터만 변경
+    navigation.pushStack('ProductActivity', { id: '456' });
     
     // 이전 화면으로 돌아가기
     navigation.pop();
     
     // 특정 화면으로 교체
-    navigation.replace('/profile');
+    navigation.replace('ProductActivity');
   };
 
   return (
@@ -214,16 +217,15 @@ function Home() {
   // 타입 시스템을 통한 안전한 네비게이션
   navigation.push('ProductActivity', { id: '123' }); // ✅
   navigation.push('ProductActivity', {}); // 타입 오류: id 파라미터가 필요해요
-  navigation.push('UnknownActivity'); // 타입 오류: 정의되지 않은 화면이에요
+  navigation.push('UnknownActivity'); // 타입 오류: 정의되지 않은 화면이에요  
+  navigation.pushStack('ProductActivity', { id: '456' }); // ✅
 }
 ```
 
 이러한 타입 시스템 활용으로 개발 단계에서 잘못된 라우팅 경로나 누락된 파라미터로 인한 오류를 사전에 방지할 수 있어요.
 
 ## Example
-
 [Shiflo](https://github.com/shiflo/shiflo-web)
 
 ## License
-
 MIT
