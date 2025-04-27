@@ -19,20 +19,34 @@ import { TransitionActionType } from "@core/transition/typing";
 import useDebounceCallback from "@hooks/useDebounceCallback";
 
 interface AppScreenProps {
+  statusBarHeight?: string;
+  statusBarColor?: string;
+  systemBottomNavigationBarHeight?: string;
+  systemBottomNavigationBarColor?: string;
   appBar?: ReactNode;
-  appBarHeight?: number;
+  appBarHeight?: string;
   bottomNavigationBar?: ReactNode;
-  bottomNavigationBarHeight?: number;
+  bottomNavigationBarHeight?: string;
   backgroundColor?: string;
+  backdropColor?: string;
+  hideStatusBar?: boolean;
+  hideSystemBottomNavigationBar?: boolean;
 }
 
 function AppScreen({
   children,
+  statusBarHeight = "env(safe-area-inset-top)",
+  statusBarColor = "white",
+  systemBottomNavigationBarHeight = "env(safe-area-inset-bottom)",
+  systemBottomNavigationBarColor = "white",
   appBar,
-  appBarHeight = 0,
+  appBarHeight = "0px",
   bottomNavigationBar,
-  bottomNavigationBarHeight = 0,
-  backgroundColor = "white"
+  bottomNavigationBarHeight = "0px",
+  backgroundColor = "white",
+  backdropColor = "rgba(0, 0, 0, 0.3)",
+  hideStatusBar,
+  hideSystemBottomNavigationBar
 }: PropsWithChildren<AppScreenProps>) {
   const {
     state: { currentActivity, previousActivity, preparingActivity }
@@ -108,12 +122,14 @@ function AppScreen({
   useEffect(() => {
     if (ref.current) {
       animatorRef.current = new Animator(
-        () => ref.current?.parentElement?.previousElementSibling as HTMLDivElement,
+        () => ref.current?.parentElement?.parentElement?.previousElementSibling as HTMLDivElement,
         () => ref.current || undefined,
         currentActivity?.animationType as AnimationType
       );
       currentActivePathRef.current =
-        animatorRef?.current?.current?.parentElement?.getAttribute("data-active-path") || "";
+        animatorRef?.current?.current?.parentElement?.parentElement?.getAttribute(
+          "data-active-path"
+        ) || "";
       previousActivePathRef.current =
         animatorRef?.current?.previous?.getAttribute("data-active-path") || "";
     }
@@ -367,7 +383,7 @@ function AppScreen({
           left: 0,
           width: "100%",
           height: "100%",
-          backgroundColor: "rgba(0, 0, 0, 0.3)",
+          backgroundColor: backdropColor,
           transition: "opacity 0.3s",
           opacity: 0,
           pointerEvents: "none",
@@ -382,29 +398,72 @@ function AppScreen({
             left: 0,
             width: "100%",
             zIndex: 1,
-            minHeight: appBarHeight,
-            maxHeight: appBarHeight
+            minHeight: `calc(${appBarHeight} + ${hideStatusBar ? "0px" : statusBarHeight})`
           }}
         >
           {appBar}
         </div>
       )}
       <div
-        ref={ref}
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
         style={{
-          marginTop: appBarHeight,
-          marginBottom: bottomNavigationBarHeight,
+          display: "flex",
+          flexDirection: "column",
           width: "100%",
-          height: `calc(100% - ${appBarHeight}px - ${bottomNavigationBarHeight}px)`,
-          overflow: "auto",
-          overscrollBehavior: "none",
-          backgroundColor,
-          ...preparationStyle.style
+          height: "100%"
         }}
       >
-        {children}
+        {!hideStatusBar && (
+          <div
+            style={{
+              width: "100%",
+              minHeight: statusBarHeight,
+              backgroundColor: statusBarColor,
+              transition: "background-color 0.3s",
+              zIndex: 1
+            }}
+          />
+        )}
+        {appBar && (
+          <div
+            style={{
+              width: "100%",
+              minHeight: appBarHeight
+            }}
+          />
+        )}
+        <div
+          ref={ref}
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
+          style={{
+            flexGrow: 1,
+            overflow: "auto",
+            overscrollBehavior: "none",
+            backgroundColor,
+            ...preparationStyle.style
+          }}
+        >
+          {children}
+        </div>
+        {bottomNavigationBar && (
+          <div
+            style={{
+              width: "100%",
+              minHeight: bottomNavigationBarHeight
+            }}
+          />
+        )}
+        {!hideSystemBottomNavigationBar && (
+          <div
+            style={{
+              width: "100%",
+              minHeight: systemBottomNavigationBarHeight,
+              backgroundColor: systemBottomNavigationBarColor,
+              transition: "background-color 0.3s",
+              zIndex: 1
+            }}
+          />
+        )}
       </div>
       {bottomNavigationBar && (
         <div
@@ -414,8 +473,9 @@ function AppScreen({
             left: 0,
             width: "100%",
             zIndex: 1,
-            minHeight: bottomNavigationBarHeight,
-            maxHeight: bottomNavigationBarHeight
+            minHeight: `calc(${bottomNavigationBarHeight} + ${
+              hideSystemBottomNavigationBar ? "0px" : systemBottomNavigationBarHeight
+            })`
           }}
         >
           {bottomNavigationBar}
