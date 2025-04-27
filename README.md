@@ -45,10 +45,10 @@ import { Router, Route } from 'basic-navigation';
 function App() {
   return (
     <Router>
-      <Route path="/" element={<Home />} />
-      <Route path="/product/:id" element={<ProductDetail />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/*path" element={<NotFound />} />
+      <Route path="/" activity={<Home />} />
+      <Route path="/product/:id" activity={<ProductDetail />} />
+      <Route path="/about" activity={<About />} />
+      <Route path="/*path" activity={<NotFound />} />
     </Router>
   );
 }
@@ -61,10 +61,7 @@ import { AppScreen } from 'basic-navigation';
 
 function Home() {
   return (
-    <AppScreen
-      appBar={<AppBar />} // 선택
-      bottomNavigationBar={<BottomNavigation />} // 선택
-    >
+    <AppScreen>
       <Button>내 정보</Button>
     </AppScreen>
   );
@@ -79,8 +76,8 @@ import { Router, Route } from 'basic-navigation';
 function App({ initPath }: { initPath: string }) {
   return (
     <Router initPath={initPath}>
-      <Route path="/" element={<Home />} />
-      <Route path="/about" element={<About />} />
+      <Route path="/" activity={<Home />} />
+      <Route path="/about" activity={<About />} />
     </Router>
   );
 }
@@ -112,11 +109,18 @@ function App({ initPath }: { initPath: string }) {
 
 ```tsx
 <AppScreen
+  statusBarHeight="env(safe-area-inset-top)"
+  statusBarColor="white" 
+  systemBottomNavigationBarHeight="env(safe-area-inset-bottom)"
+  systemBottomNavigationBarColor="white"
   appBar={<AppBar title="제목" />}
   appBarHeight={56}
   bottomNavigationBar={<BottomNavigation />}
   bottomNavigationBarHeight={56}
   backgroundColor="white"
+  backdropColor="rgba(0, 0, 0, 0.3)"
+  hideStatusBar={false}
+  hideSystemBottomNavigationBar={false}
 >
   {/* 화면 내용 */}
 </AppScreen>
