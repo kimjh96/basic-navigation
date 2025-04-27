@@ -7,7 +7,7 @@ export default function historyReducer(state: History, action: HistoryAction): H
         index: state.index + 1,
         records: state.records.concat(action)
       };
-    case HistoryActionType.STACK_PUSH:
+    case HistoryActionType.PUSH_STACK:
       return {
         index: state.index + 1,
         records: state.records.concat(action)

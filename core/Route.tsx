@@ -40,7 +40,7 @@ function Route<T extends BaseActivity["name"]>({ name, activePath, activity }: R
   const isNavigated =
     navigationStatus === NavigationStatus.READY ||
     navigationStatus === NavigationStatus.PUSH_DONE ||
-    navigationStatus === NavigationStatus.STACK_PUSH_DONE ||
+    navigationStatus === NavigationStatus.PUSH_STACK_DONE ||
     navigationStatus === NavigationStatus.REPLACE_DONE ||
     navigationStatus === NavigationStatus.BACK_DONE;
   const isFrozen = !isActive && isNavigated && transitionStatus === TransitionStatus.DONE;

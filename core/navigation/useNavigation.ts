@@ -71,7 +71,7 @@ export default function useNavigation() {
         animationType
       });
     },
-    pushRelative: <T extends BaseActivity["name"]>(
+    pushStack: <T extends BaseActivity["name"]>(
       _: T,
       params: Partial<BaseActivityParams[T]> = {},
       { animate = true, animationType = "slide" }: Options = {
@@ -107,7 +107,7 @@ export default function useNavigation() {
       window.history.pushState(
         {
           index: index + 1,
-          status: NavigationStatus.STACK_PUSH,
+          status: NavigationStatus.PUSH_STACK,
           scrollTop: window.scrollContainer?.scrollTop || 0,
           animate,
           animationType
@@ -116,7 +116,7 @@ export default function useNavigation() {
         nextPath
       );
       navigationDispatch({
-        type: NavigationActionType.STACK_PUSH,
+        type: NavigationActionType.PUSH_STACK,
         path: nextPath,
         params: nextParams as Record<string, string>,
         animate,

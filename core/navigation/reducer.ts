@@ -19,11 +19,11 @@ export default function navigationReducer(state: Navigation, action: NavigationA
           animationType: action.animationType
         })
       };
-    case NavigationActionType.STACK_PUSH:
+    case NavigationActionType.PUSH_STACK:
       return {
-        status: NavigationStatus.PUSH,
+        status: NavigationStatus.PUSH_STACK,
         events: state.events.concat({
-          status: NavigationStatus.STACK_PUSH,
+          status: NavigationStatus.PUSH_STACK,
           path: action.path,
           params: action.params,
           recordedAt: Date.now(),
@@ -70,9 +70,9 @@ export default function navigationReducer(state: Navigation, action: NavigationA
         status: NavigationStatus.PUSH_NAVIGATING,
         events: state.events.slice(0, state.events.length - 1)
       };
-    case NavigationActionType.STACK_PUSH_NAVIGATING:
+    case NavigationActionType.PUSH_STACK_NAVIGATING:
       return {
-        status: NavigationStatus.STACK_PUSH_NAVIGATING,
+        status: NavigationStatus.PUSH_STACK_NAVIGATING,
         events: state.events.slice(0, state.events.length - 1)
       };
     case NavigationActionType.REPLACE_NAVIGATING:
@@ -90,9 +90,9 @@ export default function navigationReducer(state: Navigation, action: NavigationA
         status: NavigationStatus.PUSH_DONE,
         events: state.events
       };
-    case NavigationActionType.STACK_PUSH_DONE:
+    case NavigationActionType.PUSH_STACK_DONE:
       return {
-        status: NavigationStatus.STACK_PUSH_DONE,
+        status: NavigationStatus.PUSH_STACK_DONE,
         events: state.events
       };
     case NavigationActionType.REPLACE_DONE:

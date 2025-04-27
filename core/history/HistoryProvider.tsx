@@ -55,7 +55,7 @@ function HistoryProvider({ children, initPath }: PropsWithChildren<Pick<RouterPr
       if (nextIndex !== undefined) {
         const isBack = nextIndex < state.index;
         const isPush = status === NavigationStatus.PUSH;
-        const isStackPush = status === NavigationStatus.STACK_PUSH;
+        const isPushStack = status === NavigationStatus.PUSH_STACK;
         const isReplace = status === NavigationStatus.REPLACE;
 
         if (isBack) {
@@ -74,9 +74,9 @@ function HistoryProvider({ children, initPath }: PropsWithChildren<Pick<RouterPr
             animate,
             animationType
           });
-        } else if (isStackPush) {
+        } else if (isPushStack) {
           navigationDispatch({
-            type: NavigationActionType.STACK_PUSH,
+            type: NavigationActionType.PUSH_STACK,
             path,
             params,
             animate,

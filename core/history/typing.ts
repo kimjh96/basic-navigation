@@ -15,7 +15,7 @@ export interface HistoryRecord {
 
 export const enum HistoryActionType {
   PUSH = "PUSH",
-  STACK_PUSH = "STACK_PUSH",
+  PUSH_STACK = "PUSH_STACK",
   REPLACE = "REPLACE",
   BACK = "BACK"
 }
@@ -29,7 +29,7 @@ export type HistoryAction =
       animationType?: AnimationType;
     }
   | {
-      type: HistoryActionType.STACK_PUSH;
+      type: HistoryActionType.PUSH_STACK;
       path: string;
       params: Record<string, string>;
       animate?: boolean;

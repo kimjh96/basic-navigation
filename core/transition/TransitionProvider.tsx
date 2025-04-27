@@ -117,12 +117,12 @@ function TransitionProvider({ children }: PropsWithChildren) {
               type: NavigationActionType.PUSH_DONE
             });
           });
-        } else if (event.status === NavigationStatus.STACK_PUSH) {
+        } else if (event.status === NavigationStatus.PUSH_STACK) {
           navigationDispatch({
-            type: NavigationActionType.STACK_PUSH_NAVIGATING
+            type: NavigationActionType.PUSH_STACK_NAVIGATING
           });
           historyDispatch({
-            type: HistoryActionType.STACK_PUSH,
+            type: HistoryActionType.PUSH_STACK,
             path: event.path,
             params: event.params,
             animate: event.animate,
@@ -138,7 +138,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
 
           await createTransitionTimer(async () => {
             navigationDispatch({
-              type: NavigationActionType.STACK_PUSH_DONE
+              type: NavigationActionType.PUSH_STACK_DONE
             });
           });
         } else if (event.status === NavigationStatus.REPLACE) {
@@ -194,7 +194,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
 
           const lastRecord = recordsRef.current[recordsRef.current.length - 1];
 
-          if (lastRecord.type !== HistoryActionType.STACK_PUSH) {
+          if (lastRecord.type !== HistoryActionType.PUSH_STACK) {
             activityDispatch({
               type: ActivityActionType.UPDATE_PREPARING_ACTIVITY
             });
