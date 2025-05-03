@@ -33,6 +33,7 @@ interface AppScreenProps {
   hideSystemBottomNavigationBar?: boolean;
 }
 
+// TODO 리팩토링
 function AppScreen({
   children,
   statusBarHeight = "env(safe-area-inset-top)",
@@ -132,6 +133,13 @@ function AppScreen({
         ) || "";
       previousActivePathRef.current =
         animatorRef?.current?.previous?.getAttribute("data-active-path") || "";
+
+      if (!animatorRef.current?.animation?.enableBackdrop) {
+        if (backdropRef.current) {
+          backdropRef.current.style.transition = "opacity 0.3s";
+          backdropRef.current.style.opacity = "0";
+        }
+      }
     }
   }, [currentActivity?.animationType]);
 
