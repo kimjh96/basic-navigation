@@ -37,7 +37,8 @@ function ActivityProvider({
         .map((activity) => ({
           ...activity,
           params: getParams(paths, initialPath, initialSearch),
-          activePath: initialPath
+          activePath: initialPath,
+          isRoot: true
         }));
 
       return {

@@ -17,6 +17,7 @@ export interface Activity {
   path: BaseActivityPath[BaseActivity["name"]];
   params: BaseActivityParams[BaseActivity["name"]];
   activePath: string;
+  isRoot: boolean;
   animate?: boolean;
   animationType?: AnimationType;
 }

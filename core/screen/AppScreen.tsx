@@ -91,7 +91,7 @@ function AppScreen({
     clientY: number;
     scrollTop: number;
   }) => {
-    if (!currentActivity?.animate) return;
+    if (!currentActivity?.animate || currentActivity?.isRoot) return;
 
     currentClientXRef.current = 0;
     startClientXRef.current = clientX;
