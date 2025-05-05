@@ -91,7 +91,12 @@ function AppScreen({
     clientY: number;
     scrollTop: number;
   }) => {
-    if (!currentActivity?.animate || currentActivity?.isRoot) return;
+    if (
+      !currentActivity?.animate ||
+      currentActivity?.isRoot ||
+      status === NavigationStatus.PUSH_STACK_DONE
+    )
+      return;
 
     currentClientXRef.current = 0;
     startClientXRef.current = clientX;
