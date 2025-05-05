@@ -366,6 +366,15 @@ function AppScreen({
     };
   }, []);
 
+  useEffect(() => {
+    if (status === NavigationStatus.PUSH_STACK_DONE) {
+      if (backdropRef.current) {
+        backdropRef.current.style.transition = "opacity 0.3s";
+        backdropRef.current.style.opacity = "0";
+      }
+    }
+  }, [status]);
+
   return (
     <>
       <div
