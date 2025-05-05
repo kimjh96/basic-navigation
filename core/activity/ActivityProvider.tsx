@@ -43,7 +43,7 @@ function ActivityProvider({
 
       return {
         activities,
-        previousActivity: currentActivity,
+        previousActivity: undefined,
         currentActivity
       };
     }

@@ -138,15 +138,8 @@ function AppScreen({
         ) || "";
       previousActivePathRef.current =
         animatorRef?.current?.previous?.getAttribute("data-active-path") || "";
-
-      if (!animatorRef.current?.animation?.enableBackdrop) {
-        if (backdropRef.current) {
-          backdropRef.current.style.transition = "opacity 0.3s";
-          backdropRef.current.style.opacity = "0";
-        }
-      }
     }
-  }, [currentActivity?.animationType]);
+  }, [currentActivity?.animationType, currentActivity?.isRoot]);
 
   // 현재 화면이 활성화되었을 때 실행되는 로직
   useEffect(() => {
@@ -158,7 +151,7 @@ function AppScreen({
       animatorRef.current?.hidePrevious(currentActivity?.animate, "preparing-active");
       animatorRef.current?.showCurrent(currentActivity?.animate);
 
-      if (animatorRef.current?.animation?.enableBackdrop) {
+      if (animatorRef.current?.animation?.enableBackdrop && !currentActivity?.isRoot) {
         if (backdropRef.current) {
           backdropRef.current.style.transition = "opacity 0.3s";
           backdropRef.current.style.opacity = "1";
@@ -170,19 +163,17 @@ function AppScreen({
         status: "active-initial"
       });
     }
-  }, [currentActivity?.activePath, currentActivity?.animate, currentActivity?.animationType]);
+  }, [
+    currentActivity?.activePath,
+    currentActivity?.animate,
+    currentActivity?.animationType,
+    currentActivity?.isRoot
+  ]);
 
   // 이전 화면이 다시 현재 화면으로 활성화될 때 실행되는 로직
   useEffect(() => {
     if (currentActivePathRef.current === previousActivity?.activePath) {
       animatorRef.current?.showPrevious(previousActivity?.animate);
-
-      if (animatorRef.current?.animation?.enableBackdrop) {
-        if (backdropRef.current) {
-          backdropRef.current.style.transition = "opacity 0.3s";
-          backdropRef.current.style.opacity = "1";
-        }
-      }
 
       setPreparationStyle({
         style: Animator.getPreparationStyle("active-initial", previousActivity?.animationType),
