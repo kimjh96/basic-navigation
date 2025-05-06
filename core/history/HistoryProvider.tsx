@@ -39,7 +39,10 @@ function HistoryProvider({ children, initPath }: PropsWithChildren<Pick<RouterPr
   const { dispatch: navigationDispatch } = useContext(NavigationContext);
 
   useEffect(() => {
-    window.history.replaceState({ index: 0 }, "");
+    window.history.replaceState(
+      { index: 0, status: NavigationStatus.READY, animate: true, animationType: "slide" },
+      ""
+    );
   }, []);
 
   useEffect(() => {

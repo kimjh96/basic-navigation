@@ -9,7 +9,6 @@ export default function getActivities(
     name,
     path,
     params: {},
-    activePath: path,
-    isRoot: false
+    activePath: path
   }));
 }

@@ -17,7 +17,6 @@ export interface Activity {
   path: BaseActivityPath[BaseActivity["name"]];
   params: BaseActivityParams[BaseActivity["name"]];
   activePath: string;
-  isRoot: boolean;
   animate?: boolean;
   animationType?: AnimationType;
 }
@@ -41,7 +40,6 @@ export type ActivityAction =
       type: ActivityActionType.UPDATE_CURRENT_ACTIVITY;
       path: string;
       params: Record<string, string>;
-      activity?: Activity;
       animate?: boolean;
       animationType?: AnimationType;
     }
