@@ -32,7 +32,7 @@ function TransitionProvider({ children }: PropsWithChildren) {
   const lastStatusRef = useRef(status);
   const recordsRef = useRef(records);
 
-  const createTransitionTimer = (callback: () => Promise<void>, delay: number = 300) => {
+  const createTransitionTimer = (callback: () => Promise<void>, delay: number) => {
     return new Promise<boolean>((resolve) => {
       const timer = setTimeout(async () => {
         await callback();
@@ -112,11 +112,14 @@ function TransitionProvider({ children }: PropsWithChildren) {
             animationType: event.animationType
           });
 
-          await createTransitionTimer(async () => {
-            navigationDispatch({
-              type: NavigationActionType.PUSH_DONE
-            });
-          });
+          await createTransitionTimer(
+            async () => {
+              navigationDispatch({
+                type: NavigationActionType.PUSH_DONE
+              });
+            },
+            event.animate ? 300 : 10
+          );
         } else if (event.status === NavigationStatus.PUSH_STACK) {
           navigationDispatch({
             type: NavigationActionType.PUSH_STACK_NAVIGATING
@@ -136,11 +139,14 @@ function TransitionProvider({ children }: PropsWithChildren) {
             animationType: event.animationType
           });
 
-          await createTransitionTimer(async () => {
-            navigationDispatch({
-              type: NavigationActionType.PUSH_STACK_DONE
-            });
-          });
+          await createTransitionTimer(
+            async () => {
+              navigationDispatch({
+                type: NavigationActionType.PUSH_STACK_DONE
+              });
+            },
+            event.animate ? 300 : 10
+          );
         } else if (event.status === NavigationStatus.REPLACE) {
           navigationDispatch({
             type: NavigationActionType.REPLACE_NAVIGATING
@@ -160,33 +166,36 @@ function TransitionProvider({ children }: PropsWithChildren) {
             animationType: event.animationType
           });
 
-          await createTransitionTimer(async () => {
-            const records = recordsRef.current;
-            const index = Math.max(0, records.length - 3);
-            const { path, params, animate, animationType } =
-              records.slice(index).find(Boolean) || records[records.length - 1];
+          await createTransitionTimer(
+            async () => {
+              const records = recordsRef.current;
+              const index = Math.max(0, records.length - 3);
+              const { path, params, animate, animationType } =
+                records.slice(index).find(Boolean) || records[records.length - 1];
 
-            activityDispatch({
-              type: ActivityActionType.UPDATE_SPECIFY_PREVIOUS_ACTIVITY,
-              path,
-              params,
-              animate,
-              animationType
-            });
+              activityDispatch({
+                type: ActivityActionType.UPDATE_SPECIFY_PREVIOUS_ACTIVITY,
+                path,
+                params,
+                animate,
+                animationType
+              });
 
-            await createTransitionTimer(async () => {
-              historyDispatch({
-                type: HistoryActionType.REPLACE,
-                path: event.path,
-                params: event.params,
-                animate: event.animate,
-                animationType: event.animationType
-              });
-              navigationDispatch({
-                type: NavigationActionType.REPLACE_DONE
-              });
-            }, 10);
-          });
+              await createTransitionTimer(async () => {
+                historyDispatch({
+                  type: HistoryActionType.REPLACE,
+                  path: event.path,
+                  params: event.params,
+                  animate: event.animate,
+                  animationType: event.animationType
+                });
+                navigationDispatch({
+                  type: NavigationActionType.REPLACE_DONE
+                });
+              }, 10);
+            },
+            event.animate ? 300 : 10
+          );
         } else if (event.status === NavigationStatus.BACK) {
           navigationDispatch({
             type: NavigationActionType.BACK_NAVIGATING
@@ -200,25 +209,27 @@ function TransitionProvider({ children }: PropsWithChildren) {
             });
           }
 
-          await createTransitionTimer(async () => {
-            const records = recordsRef.current;
-            const index = Math.max(0, records.length - 3);
-            const { path, params, animate, animationType } =
-              records.slice(index).find(Boolean) || lastRecord;
+          await createTransitionTimer(
+            async () => {
+              const records = recordsRef.current;
+              const index = Math.max(0, records.length - 3);
+              const { path, params, animate, animationType } =
+                records.slice(index).find(Boolean) || lastRecord;
 
-            activityDispatch({
-              type: ActivityActionType.UPDATE_PREVIOUS_ACTIVITY,
-              path,
-              params,
-              animate,
-              animationType
-            });
-
-            historyDispatch({ type: HistoryActionType.BACK });
-            navigationDispatch({
-              type: NavigationActionType.BACK_DONE
-            });
-          });
+              activityDispatch({
+                type: ActivityActionType.UPDATE_PREVIOUS_ACTIVITY,
+                path,
+                params,
+                animate,
+                animationType
+              });
+              historyDispatch({ type: HistoryActionType.BACK });
+              navigationDispatch({
+                type: NavigationActionType.BACK_DONE
+              });
+            },
+            lastRecord.type !== HistoryActionType.PUSH_STACK && event.animate ? 300 : 10
+          );
         }
       } finally {
         processingEventRef.current.delete(id);

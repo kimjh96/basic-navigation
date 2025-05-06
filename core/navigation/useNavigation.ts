@@ -73,11 +73,7 @@ export default function useNavigation() {
     },
     pushStack: <T extends BaseActivity["name"]>(
       _: T,
-      params: Partial<BaseActivityParams[T]> = {},
-      { animate = true, animationType = "slide" }: Options = {
-        animate: true,
-        animationType: "slide"
-      }
+      params: Partial<BaseActivityParams[T]> = {}
     ) => {
       const currentActivity = state.currentActivity;
 
@@ -109,8 +105,8 @@ export default function useNavigation() {
           index: index + 1,
           status: NavigationStatus.PUSH_STACK,
           scrollTop: window.scrollContainer?.scrollTop || 0,
-          animate,
-          animationType
+          animate: false,
+          animationType: "slide"
         },
         "",
         nextPath
@@ -119,8 +115,8 @@ export default function useNavigation() {
         type: NavigationActionType.PUSH_STACK,
         path: nextPath,
         params: nextParams as Record<string, string>,
-        animate,
-        animationType
+        animate: false,
+        animationType: "slide"
       });
     },
     replace: <T extends BaseActivity["name"]>(
@@ -172,11 +168,6 @@ export default function useNavigation() {
         animationType
       });
     },
-    back: () => {
-      window.history.back();
-      navigationDispatch({
-        type: NavigationActionType.BACK_START
-      });
-    }
+    back: () => window.history.back()
   };
 }

@@ -55,11 +55,6 @@ export default function navigationReducer(state: Navigation, action: NavigationA
           animationType: action.animationType
         })
       };
-    case NavigationActionType.BACK_START:
-      return {
-        status: NavigationStatus.BACK_START,
-        events: state.events
-      };
     case NavigationActionType.READY:
       return {
         status: NavigationStatus.READY,
