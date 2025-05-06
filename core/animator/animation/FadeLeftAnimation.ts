@@ -1,7 +1,13 @@
-import { AnimationState, AnimationType, BaseAnimation } from "@core/animator/typing";
+import {
+  AnimationState,
+  AnimationType,
+  BaseAnimation,
+  SwipeBackDirection
+} from "@core/animator/typing";
 
 class FadeLeftAnimation implements BaseAnimation {
   name: AnimationType = "fade-left";
+  swipeBackDirection: SwipeBackDirection = "horizontal";
   enableBackdrop = false;
 
   static getPreparationStyle = (state: AnimationState) => {

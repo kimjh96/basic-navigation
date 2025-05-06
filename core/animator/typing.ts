@@ -1,9 +1,10 @@
-export type AnimationType = "slide" | "fade" | "breath" | "fade-right" | "fade-left";
+export type AnimationType = "slide" | "fade" | "breath" | "fade-right" | "fade-left" | "sheet";
 export type AnimationState =
   | "preparing-active"
   | "preparing-inactive"
   | "active-initial"
   | "inactive-initial";
+export type SwipeBackDirection = "horizontal" | "vertical";
 
 interface StyleObject {
   transition: string;
@@ -13,6 +14,7 @@ interface StyleObject {
 export interface BaseAnimation {
   name: AnimationType;
   enableBackdrop: boolean;
+  swipeBackDirection: SwipeBackDirection;
   active: (state?: AnimationState) => StyleObject;
   inactive: (state?: AnimationState) => StyleObject;
   immediateActive: (state?: AnimationState) => StyleObject;

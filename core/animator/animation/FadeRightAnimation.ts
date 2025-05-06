@@ -1,7 +1,13 @@
-import { AnimationState, AnimationType, BaseAnimation } from "@core/animator/typing";
+import {
+  AnimationState,
+  AnimationType,
+  BaseAnimation,
+  SwipeBackDirection
+} from "@core/animator/typing";
 
 class FadeRightAnimation implements BaseAnimation {
   name: AnimationType = "fade-right";
+  swipeBackDirection: SwipeBackDirection = "horizontal";
   enableBackdrop = false;
 
   static getPreparationStyle = (state: AnimationState) => {
@@ -120,6 +126,7 @@ class FadeRightAnimation implements BaseAnimation {
   inactiveProgress = (value: number) => {
     const slideProgress = Math.min(value * 20, 20);
     const opacityProgress = Math.max(0, (slideProgress - 2) / 18);
+
     return {
       transition: "none",
       opacity: `${opacityProgress}`,

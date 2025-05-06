@@ -1,7 +1,13 @@
-import { AnimationState, AnimationType, BaseAnimation } from "@core/animator/typing";
+import {
+  AnimationState,
+  AnimationType,
+  BaseAnimation,
+  SwipeBackDirection
+} from "@core/animator/typing";
 
 class BreathAnimation implements BaseAnimation {
   name: AnimationType = "breath";
+  swipeBackDirection: SwipeBackDirection = "horizontal";
   enableBackdrop = false;
 
   static getPreparationStyle = (state: AnimationState) => {

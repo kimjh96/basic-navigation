@@ -6,6 +6,7 @@ import BreathAnimation from "@core/animator/animation/BreathAnimation";
 import FadeAnimation from "@core/animator/animation/FadeAnimation";
 import FadeLeftAnimation from "@core/animator/animation/FadeLeftAnimation";
 import FadeRightAnimation from "@core/animator/animation/FadeRightAnimation";
+import SheetAnimation from "@core/animator/animation/SheetAnimation";
 import SlideAnimation from "@core/animator/animation/SlideAnimation";
 import { AnimationState, AnimationType, BaseAnimation } from "@core/animator/typing";
 
@@ -22,6 +23,8 @@ class AnimationFactory {
         return new FadeLeftAnimation();
       case "breath":
         return new BreathAnimation();
+      case "sheet":
+        return new SheetAnimation();
       default:
         return new SlideAnimation();
     }
@@ -55,6 +58,8 @@ class Animator {
         return FadeLeftAnimation.getPreparationStyle(state);
       case "breath":
         return BreathAnimation.getPreparationStyle(state);
+      case "sheet":
+        return SheetAnimation.getPreparationStyle(state);
       default:
         return SlideAnimation.getPreparationStyle(state);
     }

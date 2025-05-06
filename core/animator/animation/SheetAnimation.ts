@@ -1,24 +1,24 @@
 import {
+  AnimationState,
   AnimationType,
   BaseAnimation,
-  AnimationState,
   SwipeBackDirection
 } from "@core/animator/typing";
 
-class SlideAnimation implements BaseAnimation {
-  name: AnimationType = "slide";
-  swipeBackDirection: SwipeBackDirection = "horizontal";
+class SheetAnimation implements BaseAnimation {
+  name: AnimationType = "sheet";
+  swipeBackDirection: SwipeBackDirection = "vertical";
   enableBackdrop = true;
 
   static getPreparationStyle = (state: AnimationState) => {
     switch (state) {
       case "active-initial":
         return {
-          transform: "translate3d(0, 0, 0)"
+          transform: "translate3d(0, 0, 0) scale(1)"
         };
       case "inactive-initial":
         return {
-          transform: "translate3d(100%, 0, 0)"
+          transform: "translate3d(0, 100%, 0) scale(0.95)"
         };
       default:
         return {};
@@ -29,13 +29,13 @@ class SlideAnimation implements BaseAnimation {
     if (state === "preparing-active") {
       return {
         transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-        transform: "translate3d(-100px, 0, 0)"
+        transform: "translate3d(0, 50px, 0) scale(0.95)"
       };
     }
 
     return {
       transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-      transform: "translate3d(0, 0, 0)"
+      transform: "translate3d(0, 0, 0) scale(1)"
     };
   };
 
@@ -43,20 +43,20 @@ class SlideAnimation implements BaseAnimation {
     if (state === "preparing-active") {
       return {
         transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-        transform: "translate3d(-100px, 0, 0)"
+        transform: "translate3d(0, 50px, 0) scale(0.95)"
       };
     }
 
     if (state === "preparing-inactive") {
       return {
         transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-        transform: "translate3d(100%, 0, 0)"
+        transform: "translate3d(0, 100%, 0) scale(0.95)"
       };
     }
 
     return {
       transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-      transform: "translate3d(0, 0, 0)"
+      transform: "translate3d(0, 0, 0) scale(1)"
     };
   };
 
@@ -64,13 +64,13 @@ class SlideAnimation implements BaseAnimation {
     if (state === "preparing-active") {
       return {
         transition: "none",
-        transform: "translate3d(-100px, 0, 0)"
+        transform: "translate3d(0, 50px, 0) scale(0.95)"
       };
     }
 
     return {
       transition: "none",
-      transform: "translate3d(0, 0, 0)"
+      transform: "translate3d(0, 0, 0) scale(1)"
     };
   };
 
@@ -78,32 +78,41 @@ class SlideAnimation implements BaseAnimation {
     if (state === "preparing-active") {
       return {
         transition: "none",
-        transform: "translate3d(-100px, 0, 0)"
+        transform: "translate3d(0, 50px, 0) scale(0.95)"
       };
     }
 
     if (state === "preparing-inactive") {
       return {
         transition: "none",
-        transform: "translate3d(100%, 0, 0)"
+        transform: "translate3d(0, 100%, 0) scale(0.95)"
       };
     }
 
     return {
       transition: "none",
-      transform: "translate3d(0, 0, 0)"
+      transform: "translate3d(0, 0, 0) scale(1)"
     };
   };
 
-  activeProgress = (_: number, clientX: number) => ({
-    transition: "none",
-    transform: `translate3d(${clientX}px, 0, 0)`
-  });
+  activeProgress = (_: number, clientY: number) => {
+    const progress = Math.min(clientY / window.innerHeight, 1);
+    const scale = 1 - progress * 0.05; // 1에서 0.95까지 scale 조정
 
-  inactiveProgress = (value: number) => ({
-    transition: "none",
-    transform: `translate3d(calc(-100px + ${value * 100}px), 0, 0)`
-  });
+    return {
+      transition: "none",
+      transform: `translate3d(0, ${clientY}px, 0) scale(${scale})`
+    };
+  };
+
+  inactiveProgress = (value: number) => {
+    const scale = 0.95 + value * 0.05; // 0.95에서 1까지 scale 조정
+
+    return {
+      transition: "none",
+      transform: `translate3d(0, ${50 - value * 50}px, 0) scale(${scale})`
+    };
+  };
 }
 
-export default SlideAnimation;
+export default SheetAnimation;

@@ -236,10 +236,19 @@ function AppScreen({
       if (!isSwipingRef.current || isScrollingRef.current) return;
 
       currentClientXRef.current = clientX - startClientXRef.current;
+      const currentClientYRef = clientY - startClientYRef.current;
 
-      const deltaY = Math.abs(clientY - startClientYRef.current);
+      const deltaY = Math.abs(currentClientYRef);
       const deltaX = Math.abs(currentClientXRef.current);
-      const notYet = deltaY > deltaX || currentClientXRef.current < 0;
+      const swipeBackDirection = animatorRef.current?.animation?.swipeBackDirection;
+
+      let notYet = false;
+      if (swipeBackDirection === "horizontal") {
+        notYet = deltaY > deltaX || currentClientXRef.current < 0;
+      } else {
+        const scrollTop = animatorRef?.current?.current?.scrollTop ?? 0;
+        notYet = deltaX > deltaY || currentClientYRef < 0 || scrollTop > 0;
+      }
 
       if (notYet) {
         animatorRef.current?.hidePrevious();
@@ -254,7 +263,10 @@ function AppScreen({
         return;
       }
 
-      const progress = deltaX / window.innerWidth;
+      const progress =
+        swipeBackDirection === "horizontal"
+          ? deltaX / window.innerWidth
+          : deltaY / window.innerHeight;
       const clampedProgress = Math.min(Math.max(progress, 0), 1);
 
       if (animatorRef.current?.animation?.enableBackdrop) {
@@ -269,7 +281,10 @@ function AppScreen({
       });
 
       animatorRef.current?.updatePreviousProgress(clampedProgress);
-      animatorRef.current?.updateCurrentProgress(clampedProgress, currentClientXRef.current);
+      animatorRef.current?.updateCurrentProgress(
+        clampedProgress,
+        swipeBackDirection === "horizontal" ? currentClientXRef.current : currentClientYRef
+      );
 
       const targetElement = e.target as HTMLElement;
 
