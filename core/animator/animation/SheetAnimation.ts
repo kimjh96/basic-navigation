@@ -56,7 +56,7 @@ class SheetAnimation implements BaseAnimation {
 
     return {
       transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-      transform: "translate3d(0, 0, 0) scale(1)"
+      transform: "translate3d(0, 100%, 0) scale(1)"
     };
   };
 
@@ -91,7 +91,7 @@ class SheetAnimation implements BaseAnimation {
 
     return {
       transition: "none",
-      transform: "translate3d(0, 0, 0) scale(1)"
+      transform: "translate3d(0, 100%, 0) scale(1)"
     };
   };
 

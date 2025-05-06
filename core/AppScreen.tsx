@@ -75,6 +75,7 @@ function AppScreen({
   const startClientYRef = useRef(0);
   const startScrollTopRef = useRef(0);
   const currentClientXRef = useRef(0);
+  const currentClientYRef = useRef(0);
   const isSwipeEndRef = useRef(true);
   const swipeEndTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
   const animatorRef = useRef<Animator>(null);
@@ -236,9 +237,9 @@ function AppScreen({
       if (!isSwipingRef.current || isScrollingRef.current) return;
 
       currentClientXRef.current = clientX - startClientXRef.current;
-      const currentClientYRef = clientY - startClientYRef.current;
+      currentClientYRef.current = clientY - startClientYRef.current;
 
-      const deltaY = Math.abs(currentClientYRef);
+      const deltaY = Math.abs(currentClientYRef.current);
       const deltaX = Math.abs(currentClientXRef.current);
       const swipeBackDirection = animatorRef.current?.animation?.swipeBackDirection;
 
@@ -247,7 +248,7 @@ function AppScreen({
         notYet = deltaY > deltaX || currentClientXRef.current < 0;
       } else {
         const scrollTop = animatorRef?.current?.current?.scrollTop ?? 0;
-        notYet = deltaX > deltaY || currentClientYRef < 0 || scrollTop > 0;
+        notYet = deltaX > deltaY || currentClientYRef.current < 0 || scrollTop > 0;
       }
 
       if (notYet) {
@@ -257,11 +258,17 @@ function AppScreen({
 
         isSwipingRef.current = false;
 
-        dispatch({
-          type: TransitionActionType.DONE
-        });
+        swipeEndTimerRef.current = setTimeout(() => {
+          dispatch({
+            type: TransitionActionType.DONE
+          });
+        }, 300);
         return;
       }
+
+      dispatch({
+        type: TransitionActionType.PENDING
+      });
 
       const progress =
         swipeBackDirection === "horizontal"
@@ -276,14 +283,10 @@ function AppScreen({
         }
       }
 
-      dispatch({
-        type: TransitionActionType.PENDING
-      });
-
       animatorRef.current?.updatePreviousProgress(clampedProgress);
       animatorRef.current?.updateCurrentProgress(
         clampedProgress,
-        swipeBackDirection === "horizontal" ? currentClientXRef.current : currentClientYRef
+        swipeBackDirection === "horizontal" ? currentClientXRef.current : currentClientYRef.current
       );
 
       const targetElement = e.target as HTMLElement;
@@ -311,6 +314,10 @@ function AppScreen({
     currentScreenElement?.addEventListener("touchmove", handleTouchMove);
 
     return () => {
+      if (swipeEndTimerRef.current) {
+        clearTimeout(swipeEndTimerRef.current);
+      }
+
       currentScreenElement?.removeEventListener("mousemove", handleMouseMove);
       currentScreenElement?.removeEventListener("touchmove", handleTouchMove);
     };
@@ -323,7 +330,12 @@ function AppScreen({
       isSwipingRef.current = false;
       isSwipeEndRef.current = false;
 
-      const isTriggered = currentClientXRef.current >= 30;
+      const swipeBackDirection = animatorRef.current?.animation?.swipeBackDirection;
+
+      const isTriggered =
+        swipeBackDirection === "horizontal"
+          ? currentClientXRef.current >= 30
+          : currentClientYRef.current >= 30;
 
       if (isTriggered) {
         animatorRef.current?.showPrevious();
@@ -341,9 +353,11 @@ function AppScreen({
 
       swipeEndTimerRef.current = setTimeout(() => {
         isSwipeEndRef.current = true;
-        dispatch({
-          type: TransitionActionType.DONE
-        });
+        swipeEndTimerRef.current = setTimeout(() => {
+          dispatch({
+            type: TransitionActionType.DONE
+          });
+        }, 300);
       }, 50);
     };
 
@@ -355,6 +369,10 @@ function AppScreen({
     animatorRef?.current?.current?.addEventListener("touchend", handleTouchEnd);
 
     return () => {
+      if (swipeEndTimerRef.current) {
+        clearTimeout(swipeEndTimerRef.current);
+      }
+
       animatorRef?.current?.current?.removeEventListener("mouseup", handleMouseUp);
       animatorRef?.current?.current?.removeEventListener("touchend", handleTouchEnd);
     };
