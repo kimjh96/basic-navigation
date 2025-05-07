@@ -485,7 +485,6 @@ function AppScreen({
           style={{
             display: "flex",
             flexDirection: "column",
-            alignItems: "flex-start",
             flexGrow: 1,
             overflow: "auto",
             overscrollBehavior: "none",
