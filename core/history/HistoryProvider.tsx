@@ -40,7 +40,13 @@ function HistoryProvider({ children, initPath }: PropsWithChildren<Pick<RouterPr
 
   useEffect(() => {
     window.history.replaceState(
-      { index: 0, status: NavigationStatus.READY, animate: true, animationType: "slide" },
+      {
+        index: 0,
+        status: NavigationStatus.READY,
+        scrollTop: 0,
+        animate: true,
+        animationType: "slide"
+      },
       ""
     );
   }, []);

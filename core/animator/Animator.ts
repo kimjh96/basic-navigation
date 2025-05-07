@@ -140,14 +140,6 @@ class Animator {
 
     this.previous?.setAttribute("style", styleObjectToString(styleObject));
   }
-
-  restoreScroll() {
-    if (this.current?.lastElementChild) {
-      this.current.lastElementChild?.scrollTo({
-        top: window.history.state?.scrollTop || 0
-      });
-    }
-  }
 }
 
 export default Animator;

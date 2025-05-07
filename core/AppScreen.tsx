@@ -139,6 +139,13 @@ function AppScreen({
         ) || "";
       previousActivePathRef.current =
         animatorRef?.current?.previous?.getAttribute("data-active-path") || "";
+
+      window.appScreen = ref.current;
+      if (window.appScreen) {
+        window.appScreen.scrollTo({
+          top: window.history.state?.scrollTop || 0
+        });
+      }
     }
   }, [currentActivity?.animationType]);
 
@@ -148,7 +155,6 @@ function AppScreen({
       currentActivePathRef.current === currentActivity?.activePath &&
       previousActivePathRef.current !== currentActivity?.activePath
     ) {
-      animatorRef.current?.restoreScroll();
       animatorRef.current?.hidePrevious(currentActivity?.animate, "preparing-active");
       animatorRef.current?.showCurrent(currentActivity?.animate);
 
@@ -477,6 +483,9 @@ function AppScreen({
           onMouseDown={handleMouseDown}
           onTouchStart={handleTouchStart}
           style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
             flexGrow: 1,
             overflow: "auto",
             overscrollBehavior: "none",
@@ -530,6 +539,6 @@ export default AppScreen;
 
 declare global {
   interface Window {
-    scrollContainer: HTMLDivElement | null;
+    appScreen: HTMLDivElement | null;
   }
 }

@@ -52,11 +52,22 @@ export default function useNavigation() {
 
       nextPath = queryStringParams ? `${nextPath}?${queryStringParams}` : nextPath;
 
+      const { pathname, search } = window.location;
+      const currentPath = `${pathname}${search}`;
+
+      window.history.replaceState(
+        {
+          ...window.history.state,
+          scrollTop: window.appScreen?.scrollTop || 0
+        },
+        "",
+        currentPath
+      );
       window.history.pushState(
         {
           index: index + 1,
           status: NavigationStatus.PUSH,
-          scrollTop: window.scrollContainer?.scrollTop || 0,
+          scrollTop: 0,
           animate,
           animationType
         },
@@ -104,7 +115,7 @@ export default function useNavigation() {
         {
           index: index + 1,
           status: NavigationStatus.PUSH_STACK,
-          scrollTop: window.scrollContainer?.scrollTop || 0,
+          scrollTop: window.appScreen?.scrollTop || 0,
           animate: false,
           animationType: "slide"
         },
@@ -153,7 +164,7 @@ export default function useNavigation() {
         {
           index,
           status: NavigationStatus.REPLACE,
-          scrollTop: window.scrollContainer?.scrollTop || 0,
+          scrollTop: window.appScreen?.scrollTop || 0,
           animate,
           animationType
         },
