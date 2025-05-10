@@ -77,7 +77,6 @@ function AppScreen({
   const currentClientXRef = useRef(0);
   const currentClientYRef = useRef(0);
   const isSwipeEndRef = useRef(true);
-  const swipeEndTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
   const animatorRef = useRef<Animator>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const currentActivePathRef = useRef("");
@@ -263,12 +262,6 @@ function AppScreen({
         currentClientXRef.current = 1; // 사용자 제스처를 무시하고 클릭 이벤트가 전파되는 것을 방지
 
         isSwipingRef.current = false;
-
-        swipeEndTimerRef.current = setTimeout(() => {
-          dispatch({
-            type: TransitionActionType.DONE
-          });
-        }, 300);
         return;
       }
 
@@ -320,16 +313,14 @@ function AppScreen({
     currentScreenElement?.addEventListener("touchmove", handleTouchMove);
 
     return () => {
-      if (swipeEndTimerRef.current) {
-        clearTimeout(swipeEndTimerRef.current);
-      }
-
       currentScreenElement?.removeEventListener("mousemove", handleMouseMove);
       currentScreenElement?.removeEventListener("touchmove", handleTouchMove);
     };
   }, [dispatch]);
 
   useEffect(() => {
+    const currentScreenElement = ref.current;
+
     const endSwipe = () => {
       if (!currentActivity?.animate || preparationStyle.status === "inactive-initial") return;
 
@@ -352,35 +343,27 @@ function AppScreen({
         animatorRef.current?.hidePrevious(true, "preparing-active");
         animatorRef.current?.showCurrent();
       }
-
-      if (swipeEndTimerRef.current) {
-        clearTimeout(swipeEndTimerRef.current);
-      }
-
-      swipeEndTimerRef.current = setTimeout(() => {
-        isSwipeEndRef.current = true;
-        swipeEndTimerRef.current = setTimeout(() => {
-          dispatch({
-            type: TransitionActionType.DONE
-          });
-        }, 300);
-      }, 50);
     };
 
     const handleMouseUp = () => endSwipe();
 
     const handleTouchEnd = () => endSwipe();
 
-    animatorRef?.current?.current?.addEventListener("mouseup", handleMouseUp);
-    animatorRef?.current?.current?.addEventListener("touchend", handleTouchEnd);
+    const handleTransitionEnd = () => {
+      isSwipeEndRef.current = true;
+      dispatch({
+        type: TransitionActionType.DONE
+      });
+    };
+
+    currentScreenElement?.addEventListener("mouseup", handleMouseUp);
+    currentScreenElement?.addEventListener("touchend", handleTouchEnd);
+    currentScreenElement?.addEventListener("transitionend", handleTransitionEnd);
 
     return () => {
-      if (swipeEndTimerRef.current) {
-        clearTimeout(swipeEndTimerRef.current);
-      }
-
-      animatorRef?.current?.current?.removeEventListener("mouseup", handleMouseUp);
-      animatorRef?.current?.current?.removeEventListener("touchend", handleTouchEnd);
+      currentScreenElement?.removeEventListener("mouseup", handleMouseUp);
+      currentScreenElement?.removeEventListener("touchend", handleTouchEnd);
+      currentScreenElement?.removeEventListener("transitionend", handleTransitionEnd);
     };
   }, [currentActivity?.animate, dispatch, preparationStyle.status]);
 

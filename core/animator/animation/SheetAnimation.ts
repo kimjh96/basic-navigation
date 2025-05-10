@@ -18,7 +18,7 @@ class SheetAnimation implements BaseAnimation {
         };
       case "inactive-initial":
         return {
-          transform: "translate3d(0, 100%, 0) scale(0.95)"
+          transform: "translate3d(0, 100%, 0) scale(0.97)"
         };
       default:
         return {};
@@ -29,7 +29,7 @@ class SheetAnimation implements BaseAnimation {
     if (state === "preparing-active") {
       return {
         transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-        transform: "translate3d(0, 50px, 0) scale(0.95)"
+        transform: "translate3d(0, 25px, 0) scale(0.97)"
       };
     }
 
@@ -43,14 +43,14 @@ class SheetAnimation implements BaseAnimation {
     if (state === "preparing-active") {
       return {
         transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-        transform: "translate3d(0, 50px, 0) scale(0.95)"
+        transform: "translate3d(0, 25px, 0) scale(0.97)"
       };
     }
 
     if (state === "preparing-inactive") {
       return {
         transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-        transform: "translate3d(0, 100%, 0) scale(0.95)"
+        transform: "translate3d(0, 100%, 0) scale(0.97)"
       };
     }
 
@@ -64,7 +64,7 @@ class SheetAnimation implements BaseAnimation {
     if (state === "preparing-active") {
       return {
         transition: "none",
-        transform: "translate3d(0, 50px, 0) scale(0.95)"
+        transform: "translate3d(0, 25px, 0) scale(0.97)"
       };
     }
 
@@ -78,14 +78,14 @@ class SheetAnimation implements BaseAnimation {
     if (state === "preparing-active") {
       return {
         transition: "none",
-        transform: "translate3d(0, 50px, 0) scale(0.95)"
+        transform: "translate3d(0, 25px, 0) scale(0.97)"
       };
     }
 
     if (state === "preparing-inactive") {
       return {
         transition: "none",
-        transform: "translate3d(0, 100%, 0) scale(0.95)"
+        transform: "translate3d(0, 100%, 0) scale(0.97)"
       };
     }
 
@@ -97,7 +97,7 @@ class SheetAnimation implements BaseAnimation {
 
   activeProgress = (_: number, clientY: number) => {
     const progress = Math.min(clientY / window.innerHeight, 1);
-    const scale = 1 - progress * 0.05; // 1에서 0.95까지 scale 조정
+    const scale = 1 - progress * 0.03; // 1에서 0.97까지 scale 조정
 
     return {
       transition: "none",
@@ -106,11 +106,11 @@ class SheetAnimation implements BaseAnimation {
   };
 
   inactiveProgress = (value: number) => {
-    const scale = 0.95 + value * 0.05; // 0.95에서 1까지 scale 조정
+    const scale = 0.97 + value * 0.03; // 0.97에서 1까지 scale 조정
 
     return {
       transition: "none",
-      transform: `translate3d(0, ${50 - value * 50}px, 0) scale(${scale})`
+      transform: `translate3d(0, ${25 - value * 25}px, 0) scale(${scale})`
     };
   };
 }
